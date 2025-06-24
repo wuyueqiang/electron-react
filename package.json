@@ -42,13 +42,17 @@
     "postinstall": "ts-node .erb/scripts/check-native-dep.js && electron-builder install-app-deps && npm run build:dll",
     "lint": "cross-env NODE_ENV=development eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "cross-env NODE_ENV=development eslint . --ext .js,.jsx,.ts,.tsx --fix",
-    "package": "ts-node ./.erb/scripts/clean.js dist && npm run build && electron-builder build --publish never && npm run build:dll",
+    "package": "cross-env NODE_ENV=production WEB_ENV=prod ts-node ./.erb/scripts/clean.js dist && cross-env NODE_ENV=production WEB_ENV=prod npm run build && electron-builder build --publish never --config.directories.output=release/build && cross-env NODE_ENV=production WEB_ENV=prod npm run build:dll",
+    "package-test": "cross-env NODE_ENV=production WEB_ENV=test ts-node ./.erb/scripts/clean.js dist && cross-env NODE_ENV=production WEB_ENV=test npm run build && electron-builder build --publish never --config.directories.output=release/build-test && cross-env NODE_ENV=production WEB_ENV=test npm run build:dll",
+    "package-qa": "cross-env NODE_ENV=production WEB_ENV=qa ts-node ./.erb/scripts/clean.js dist && cross-env NODE_ENV=qa WEB_ENV=qa npm run build && electron-builder build --publish never --config.directories.output=release/build-qa && cross-env NODE_ENV=qa WEB_ENV=qa npm run build:dll",
     "rebuild": "electron-rebuild --parallel --types prod,dev,optional --module-dir release/app",
     "prestart": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true NODE_OPTIONS=\"-r ts-node/register --no-warnings\" webpack --config ./.erb/configs/webpack.config.main.dev.ts",
     "start": "ts-node ./.erb/scripts/check-port-in-use.js && npm run prestart && npm run start:renderer",
     "start:main": "concurrently -k -P \"cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --watch --config ./.erb/configs/webpack.config.main.dev.ts\" \"electronmon . -- {@}\" --",
     "start:preload": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true NODE_OPTIONS=\"-r ts-node/register --no-warnings\" webpack --config ./.erb/configs/webpack.config.preload.dev.ts",
-    "start:renderer": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true NODE_OPTIONS=\"-r ts-node/register --no-warnings\" webpack serve --config ./.erb/configs/webpack.config.renderer.dev.ts",
+    "start:renderer": "cross-env NODE_ENV=development WEB_ENV=test TS_NODE_TRANSPILE_ONLY=true NODE_OPTIONS=\"-r ts-node/register --no-warnings\" webpack serve --config ./.erb/configs/webpack.config.renderer.dev.ts",
+    "start-qa": "cross-env NODE_ENV=development WEB_ENV=qa TS_NODE_TRANSPILE_ONLY=true NODE_OPTIONS=\"-r ts-node/register --no-warnings\" webpack serve --config ./.erb/configs/webpack.config.renderer.dev.ts",
+    "start-prod": "cross-env NODE_ENV=development WEB_ENV=prod TS_NODE_TRANSPILE_ONLY=true NODE_OPTIONS=\"-r ts-node/register --no-warnings\" webpack serve --config ./.erb/configs/webpack.config.renderer.dev.ts",
     "test": "jest"
   },
   "browserslist": [
@@ -101,15 +105,16 @@
     }
   },
   "dependencies": {
-    "@electron/notarize": "^3.0.0",
     "electron-debug": "^4.1.0",
     "electron-log": "^5.3.2",
     "electron-updater": "^6.3.9",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-router-dom": "^7.3.0"
+    "react-router-dom": "^7.3.0",
+    "source-map-support": "^0.5.21"
   },
   "devDependencies": {
+    "@electron/notarize": "^2.2.0",
     "@electron/rebuild": "^3.7.1",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.15",
     "@svgr/webpack": "^8.1.0",

@@ -141,6 +141,7 @@ const configuration: webpack.Configuration = {
      */
     new webpack.EnvironmentPlugin({
       NODE_ENV: 'development',
+      WEB_ENV: process.env.WEB_ENV,
     }),
 
     new webpack.LoaderOptionsPlugin({

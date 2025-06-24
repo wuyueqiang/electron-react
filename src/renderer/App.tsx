@@ -5,6 +5,7 @@ import './App.css';
 function Hello() {
   return (
     <div>
+      <p>process.env.WEB_ENV: {process.env.WEB_ENV}</p>
       <div className="Hello">
         <img width="200" alt="icon" src={icon} />
       </div>
