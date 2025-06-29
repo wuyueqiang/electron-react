@@ -1,0 +1,214 @@
+.live-room-page {
+  min-height: 100vh;
+  background: #1a1a1a;
+  color: white;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+.live-room-header {
+  background: #2d2d2d;
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border-bottom: 1px solid #404040;
+}
+
+.back-button {
+  background: #404040;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+  background: #505050;
+}
+
+.room-info h1 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.room-info p {
+  margin: 0;
+  color: #ccc;
+  font-size: 0.9rem;
+}
+
+.live-indicator {
+  background: #dc3545;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-left: auto;
+}
+
+.live-room-content {
+  display: flex;
+  height: calc(100vh - 80px);
+}
+
+.video-container {
+  flex: 2;
+  background: #000;
+  position: relative;
+}
+
+.video-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.video-overlay {
+  text-align: center;
+  color: white;
+}
+
+.play-button {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.play-button:hover {
+  transform: scale(1.1);
+}
+
+.video-overlay p {
+  font-size: 1.2rem;
+  margin: 0;
+  opacity: 0.8;
+}
+
+.chat-container {
+  flex: 1;
+  background: #2d2d2d;
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid #404040;
+  min-width: 300px;
+}
+
+.chat-header {
+  padding: 1rem;
+  border-bottom: 1px solid #404040;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chat-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.online-count {
+  color: #ccc;
+  font-size: 0.8rem;
+}
+
+.chat-messages {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.message {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background: #404040;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.message-user {
+  color: #667eea;
+  font-weight: 600;
+}
+
+.message-content {
+  color: #fff;
+  flex: 1;
+}
+
+.message-time {
+  color: #999;
+  font-size: 0.8rem;
+}
+
+.chat-input-form {
+  padding: 1rem;
+  border-top: 1px solid #404040;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.chat-input {
+  flex: 1;
+  background: #404040;
+  border: none;
+  padding: 0.75rem;
+  border-radius: 6px;
+  color: white;
+  font-size: 0.9rem;
+}
+
+.chat-input::placeholder {
+  color: #999;
+}
+
+.chat-input:focus {
+  outline: none;
+  background: #505050;
+}
+
+.send-button {
+  background: #667eea;
+  color: white;
+  border: none;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease;
+}
+
+.send-button:hover {
+  background: #5a6fd8;
+}
+
+@media (max-width: 768px) {
+  .live-room-content {
+    flex-direction: column;
+  }
+  
+  .chat-container {
+    min-width: auto;
+    height: 300px;
+  }
+  
+  .live-room-header {
+    padding: 1rem;
+    flex-wrap: wrap;
+  }
+} 

@@ -6,7 +6,8 @@ body {
   position: relative;
   color: white;
   height: 100vh;
-  background: linear-gradient(
+  margin: 0;
+  /* background: linear-gradient(
     200.96deg,
     #fedc2a -29.09%,
     #dd5789 51.77%,
@@ -16,7 +17,7 @@ body {
   overflow-y: hidden;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: center; */
 }
 
 button {
