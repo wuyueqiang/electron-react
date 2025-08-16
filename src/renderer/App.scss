@@ -2,16 +2,24 @@
  * @NOTE: Prepend a `~` to css file paths that are in your node_modules
  *        See https://github.com/webpack-contrib/sass-loader#imports
  */
+
+// SCSS变量
+$primary-color: #7a2c9e;
+$secondary-color: #dd5789;
+$accent-color: #fedc2a;
+$text-color: white;
+$border-radius: 10px;
+
 body {
   position: relative;
-  color: white;
+  color: $text-color;
   height: 100vh;
   margin: 0;
   /* background: linear-gradient(
     200.96deg,
-    #fedc2a -29.09%,
-    #dd5789 51.77%,
-    #7a2c9e 129.35%
+    $accent-color -29.09%,
+    $secondary-color 51.77%,
+    $primary-color 129.35%
   );
   font-family: sans-serif;
   overflow-y: hidden;
@@ -23,7 +31,7 @@ body {
 button {
   background-color: white;
   padding: 10px 20px;
-  border-radius: 10px;
+  border-radius: $border-radius;
   border: none;
   appearance: none;
   font-size: 1.3rem;
@@ -32,11 +40,11 @@ button {
   transition: all ease-in 0.1s;
   cursor: pointer;
   opacity: 0.9;
-}
 
-button:hover {
-  transform: scale(1.05);
-  opacity: 1;
+  &:hover {
+    transform: scale(1.05);
+    opacity: 1;
+  }
 }
 
 li {
@@ -48,11 +56,11 @@ a {
   height: fit-content;
   width: fit-content;
   margin: 10px;
-}
 
-a:hover {
-  opacity: 1;
-  text-decoration: none;
+  &:hover {
+    opacity: 1;
+    text-decoration: none;
+  }
 }
 
 .Hello {

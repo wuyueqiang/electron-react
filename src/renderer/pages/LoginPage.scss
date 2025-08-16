@@ -1,0 +1,199 @@
+.login-wrap {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+
+  .login-bg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .login-container {
+    width: 420px;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: #FFFFFF;
+    border-radius: 16px;
+    overflow: hidden;
+
+    .switch-login {
+      width: 0;
+      height: 0;
+      border-top: 100px solid #FF7935;
+      border-left: 100px solid transparent;
+      position: absolute;
+      right: 0;
+      top: 0;
+      cursor: pointer;
+
+      &.youshu {
+        border-top: 100px solid #00BF7F;
+      }
+
+      .logo {
+        position: absolute;
+        right: 17px;
+        top: -86px;
+      }
+
+      .login-tip {
+        width: 89px;
+        height: 26px;
+        position: absolute;
+        right: 88px;
+        top: -90px;
+      }
+    }
+
+    .title {
+      height: 40px;
+      display: block;
+      margin: 48px auto;
+    }
+
+    .close {
+      font-size: 16px;
+      position: absolute;
+      right: 12px;
+      top: 12px;
+      cursor: pointer;
+    }
+
+    .login-nav {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 21px;
+
+      .nav-item {
+        margin: 0 25px;
+        display: inline-block;
+        font-size: 12px;
+        color: #161616;
+        padding: 0 0 5px;
+        cursor: pointer;
+
+        &.active {
+          color: #F8823B;
+          position: relative;
+
+          &:before {
+            content: '';
+            width: 10px;
+            height: 4px;
+            background: #F8823B;
+            border-radius: 2px;
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            transform: translateX(-50%);
+          }
+        }
+
+        &.youshu-active {
+          color: #2BAF6A !important;
+
+          &:before {
+            background: #2BAF6A !important;
+          }
+        }
+      }
+    }
+
+    .login-form {
+      padding: 0 66px;
+
+      .login-code {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #EDEFF1;
+
+        .ant-form-item {
+          border-bottom: 0;
+        }
+
+        .login-code-btn {
+          margin: 0;
+          background: #E0E0E0;
+          border-radius: 12px;
+          font-size: 10px;
+          color: #FFFFFF;
+          padding: 3px 6px;
+          cursor: pointer;
+
+          &.active {
+            background: linear-gradient(180deg, rgba(252, 170, 91, 1) 0%, rgba(247, 113, 46, 1) 100%);
+          }
+
+          &.active-youshu {
+            background: #00BF7F !important;
+          }
+        }
+      }
+
+      .ant-form-item {
+        border-bottom: 1px solid #EDEFF1;
+        padding: 12px 0;
+        margin-bottom: 0;
+
+        .ant-form-item-label {
+          label {
+            font-size: 12px;
+
+            &:before {
+              display: none;
+            }
+          }
+        }
+
+        .ant-input {
+          border: 0;
+          font-size: 12px;
+        }
+
+        .ant-input-affix-wrapper {
+          border: 0;
+        }
+      }
+
+      .login-form-forgot {
+        font-size: 10px;
+        color: #B9B0B0;
+        margin: 7px 0 0;
+      }
+
+    }
+
+    .login-btn {
+      width: 274px;
+      height: 45px;
+      background: rgba(255, 255, 255, 1);
+      border-radius: 23px;
+      border: 1px solid rgba(194, 194, 194, 1);
+      display: block;
+      margin: 36px auto 36px;
+      outline: none;
+      font-size: 16px;
+      color: #808080;
+      text-align: center;
+      line-height: 45px;
+      cursor: pointer;
+    }
+
+    .update-box {
+      text-align: center;
+      padding-bottom: 20px;
+
+      .version {
+        color: #c2c2c2;
+        text-decoration: underline;
+        cursor: pointer;
+      }
+    }
+
+  }
+}

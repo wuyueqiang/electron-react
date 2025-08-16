@@ -5,7 +5,7 @@ import {
   Navigate,
 } from 'react-router-dom';
 import { LoginPage, LiveListPage, LiveRoomPage } from './pages';
-import './App.css';
+import './App.scss';
 
 export default function App() {
   return (
