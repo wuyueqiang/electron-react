@@ -3,9 +3,12 @@ import { Form, Input, message as Message, Modal } from 'antd';
 import { connect } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import './LoginPage.scss';
+import { machineIdSync } from 'node-machine-id';
+import { getUUID, LStorage } from '../utils/tools';
+
 import IMGS from '../imgs'
 // import Update from '../components/Update';
-// import { youshuLogin, youshuSmsCode } from '../api';
+import { youshuLogin, youshuSmsCode } from '../api';
 
 interface LoginPageParam {
   dispatch: any,
@@ -14,7 +17,7 @@ interface LoginPageParam {
 
 let times: number = 60;
 
-function LoginPage() {
+function LoginPage(props: LoginPageParam) {
   const [loginType, setLoginType] = useState('mobile_code');
   const [codeText, setCodeText] = useState('获取验证码');
   const [form] = Form.useForm();
@@ -24,38 +27,47 @@ function LoginPage() {
   const navigate = useNavigate();
 
 
-  function onFinish(values: any) {
+  async function onFinish(values: any) {
     let { mobile, password, code } = values;
-    // youshuLogin({
-    //     mobile: mobile,
-    //     login_type: loginType,
-    //     password: password,
-    //     code: code
-    // }).then(res => {
-    //     if (res.code == 1) {
-    //         store.set('USER_INFO', {
-    //             userId: res.data.user_id,
-    //             password: password,
-    //             nick: res.data.nickname,
-    //             avatar: res.data.avatar,
-    //             role: 'ANCHOR',
-    //             mobile,
-    //             app: 10120,   // 有师：10110，有书：10120
-    //             liveToken: res.data.remember_token
-    //         })
-    //         props.history.push({
-    //             pathname: '/LiveList', 
-    //         })
-    //     } else if (res.code == 6010010) {
-    //         Message.warning('密码错误')
-    //     } else {
-    //         Message.warning(`${res.code}--${res.msg}`);
-    //     }
-    // }).catch(err => {
-    //     // console.log('err', err);
-    //     Message.warning(`当前网络不可用，请检查网络状态`);
-    // })
-    navigate('/live-list')
+    
+    youshuLogin({
+        mobile: mobile,
+        login_type: loginType,
+        password: password,
+        code: code
+    }).then(async res => {
+        if (res.code == 1) {
+            // store.set('USER_INFO', {
+            //     userId: res.data.user_id,
+            //     password: password,
+            //     nick: res.data.nickname,
+            //     avatar: res.data.avatar,
+            //     role: 'ANCHOR',
+            //     mobile,
+            //     app: 10120,   // 有师：10110，有书：10120
+            //     liveToken: res.data.remember_token
+            // })
+            await LStorage.setItem('USER_INFO', {
+              userId: res.data.user_id,
+              password: password,
+              nick: res.data.nickname,
+              avatar: res.data.avatar,
+              role: 'ANCHOR',
+              mobile,
+              app: 10120,   // 有师：10110，有书：10120
+              liveToken: res.data.remember_token
+            })
+            navigate('/live-list')
+        } else if (res.code == 6010010) {
+            Message.warning('密码错误')
+        } else {
+            Message.warning(`${res.code}--${res.msg}`);
+        }
+    }).catch(err => {
+        // console.log('err', err);
+        Message.warning(`当前网络不可用，请检查网络状态`);
+    })
+    // navigate('/live-list')
   };
 
   function sendSMS() {
@@ -70,34 +82,24 @@ function LoginPage() {
       return;
     }
 
-    // youshuSmsCode({
-    //   mobile: Number(phone),
-    // }).then(res => {
-    //   if (res.code == 1) {
-    //     timerId.current = setInterval(() => {
-    //       times--;
-    //       setCodeText(`${times}后重新获取`)
-    //       if (times == 0) {
-    //         times = 60;
-    //         setCodeText('获取验证码');
-    //         clearInterval(timerId.current)
-    //       }
-    //     }, 1000)
-    //   }
-    // }).catch(err => {
-    //   // console.log('err', err);
-    //   Message.warning(`当前网络不可用，请检查网络状态`);
-    // })
-
-    timerId.current = setInterval(() => {
-      times--;
-      setCodeText(`${times}后重新获取`)
-      if (times == 0) {
-        times = 60;
-        setCodeText('获取验证码');
-        clearInterval(timerId.current)
+    youshuSmsCode({
+      mobile: Number(phone),
+    }).then(res => {
+      if (res.code == 1) {
+        timerId.current = setInterval(() => {
+          times--;
+          setCodeText(`${times}后重新获取`)
+          if (times == 0) {
+            times = 60;
+            setCodeText('获取验证码');
+            clearInterval(timerId.current)
+          }
+        }, 1000)
       }
-    }, 1000)
+    }).catch(err => {
+      console.log('err', err);
+      Message.warning(`当前网络不可用，请检查网络状态`);
+    })
   }
 
   return (

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './LiveListPage.scss';
+import { LStorage } from '../utils/tools';
 
 interface LiveRoom {
   id: string;
@@ -57,6 +58,7 @@ function LiveListPage() {
   };
 
   const handleLogout = () => {
+    LStorage.removeItem('USER_INFO');
     navigate('/login');
   };
 
