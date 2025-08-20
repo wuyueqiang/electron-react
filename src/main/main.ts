@@ -9,7 +9,7 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, shell, ipcMain } from 'electron';
+import { app, BrowserWindow, shell, ipcMain, desktopCapturer } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
@@ -25,10 +25,23 @@ class AppUpdater {
 
 let mainWindow: BrowserWindow | null = null;
 
-ipcMain.on('ipc-example', async (event, arg) => {
-  const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
-  console.log(msgTemplate(arg));
-  event.reply('ipc-example', msgTemplate('pong'));
+// 处理获取屏幕源的请求
+ipcMain.on('get-screen-sources', async (event, args) => {
+  try {
+    const sources = await desktopCapturer.getSources({
+      types: ['window', 'screen'],
+      thumbnailSize: { width: 150, height: 150 }  // 添加缩略图尺寸
+    });
+     // 将缩略图转换为 PNG base64 格式
+    const sourcesWithPngThumbnails = sources.map(source => ({
+      ...source,
+      thumbnail: source.thumbnail.toPNG().toString('base64')
+    }));
+    event.sender.send('get-screen-sources-reply', sourcesWithPngThumbnails);
+  } catch (error) {
+    console.error('Error getting screen sources:', error);
+    event.sender.send('get-screen-sources-reply', { error: (error as Error).message });
+  }
 });
 
 if (process.env.NODE_ENV === 'production') {
@@ -75,6 +88,10 @@ const createWindow = async () => {
     height: 728,
     icon: getAssetPath('icon.png'),
     webPreferences: {
+      // nodeIntegration: true,
+      // contextIsolation: false,
+      // 支持跨域
+      webSecurity: false,
       preload: app.isPackaged
         ? path.join(__dirname, 'preload.js')
         : path.join(__dirname, '../../.erb/dll/preload.js'),
