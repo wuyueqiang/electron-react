@@ -27,8 +27,8 @@ const service = axios.create({
     timeout: 10000,
 });
 
-service.interceptors.request.use(function (config) {
-    config.headers['Grpc-Metadata-device_id'] = LStorage.getItem('DEVICE_ID')||'';
+service.interceptors.request.use(async function (config) {
+    config.headers['Grpc-Metadata-device_id'] = await LStorage.getItem('DEVICE_ID')||'';
     config.headers['Grpc-Metadata-ua'] = navigator.userAgent;
     config.headers['Grpc-Metadata-version'] = pkg.version;
     return config;

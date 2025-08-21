@@ -27,8 +27,8 @@ const service = axios.create({
     timeout: 10000,
 });
 
-service.interceptors.request.use(function (config) {
-    config.headers['Grpc-Metadata-device_id'] = LStorage.getItem('DEVICE_ID')||'';
+service.interceptors.request.use(async function (config) {
+    config.headers['Grpc-Metadata-device_id'] = await LStorage.getItem('DEVICE_ID')||'';
     config.headers['Grpc-Metadata-ua'] = navigator.userAgent;
     config.headers['Grpc-Metadata-version'] = pkg.version;
     return config;
@@ -55,9 +55,9 @@ export default async (params: AxiosParams) => {
         data: dataType == 'json' ? JSON.stringify(data) : Qs.stringify(data),
         headers: {
             'Content-Type': contentType,
-            'Grpc-Metadata-live_token': (userInfo as any)?.liveToken || '',
-            'Grpc-Metadata-app': (userInfo as any)?.app || '',
-            'Grpc-Metadata-user_id': (userInfo as any)?.userId || '',
+            'Grpc-Metadata-live_token': userInfo.liveToken || '',
+            'Grpc-Metadata-app': userInfo.app || '',
+            'Grpc-Metadata-user_id': userInfo.userId || '',
             'luban-key': LUBAN_KEY
         },
         withCredentials: true
@@ -85,7 +85,7 @@ export default async (params: AxiosParams) => {
                     msg: responseJson.data.status.msg
                 },
             }
-            errorLog(logContent, "ERR")
+            // errorLog(logContent, "ERR")
         }
     } catch (error) {
         console.error('上报xlog catch error', error);

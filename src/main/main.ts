@@ -11,14 +11,16 @@
 import path from 'path';
 import { app, BrowserWindow, shell, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
-import log from 'electron-log';
+import logger from 'electron-log';
+import { machineIdSync } from 'node-machine-id';
+import { randomUUID } from 'crypto';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 
 class AppUpdater {
   constructor() {
-    log.transports.file.level = 'info';
-    autoUpdater.logger = log;
+    logger.transports.file.level = 'info';
+    autoUpdater.logger = logger;
     autoUpdater.checkForUpdatesAndNotify();
   }
 }
@@ -29,6 +31,33 @@ ipcMain.on('ipc-example', async (event, arg) => {
   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
   console.log(msgTemplate(arg));
   event.reply('ipc-example', msgTemplate('pong'));
+});
+
+// 获取设备 ID
+ipcMain.handle('get-device-id', async () => {
+  try {
+    return machineIdSync(true);
+  } catch (error) {
+    // 如果获取机器 ID 失败，则返回 UUID
+    return randomUUID();
+  }
+});
+
+// 处理日志上传
+ipcMain.on('uploadLog', (event) => {
+  try {
+    // 这里实现日志上传逻辑
+    // 上传成功后，发送结果到渲染进程
+    event.reply('getLogUrl', 'https://example.com/log/123456');
+  } catch (error) {
+    console.error('上传日志失败:', error);
+    event.reply('getLogUrl', null);
+  }
+});
+
+ipcMain.on('setLogger', (event, arg) => {
+  console.log('====setLogger', arg);
+  logger.info(JSON.stringify(arg));
 });
 
 if (process.env.NODE_ENV === 'production') {
@@ -62,7 +91,7 @@ const createWindow = async () => {
   }
 
   const RESOURCES_PATH = app.isPackaged
-    ? path.join(process.resourcesPath, 'assets')
+    ? path.join(process.resourcesPath || path.dirname(app.getPath('exe')), 'assets')
     : path.join(__dirname, '../../assets');
 
   const getAssetPath = (...paths: string[]): string => {

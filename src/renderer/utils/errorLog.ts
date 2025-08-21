@@ -1,12 +1,9 @@
 import { xlog } from '../api';
-import logger from 'electron-log';
-// import Store from 'electron-store'
-// const store: any = new Store();
 import { LStorage } from './tools';
 import os from 'os';
 import { version } from '../../../package.json'
 
-export default function errorLog(content: object, level: string = 'INFO') {
+export default async function errorLog(content: object, level: string = 'INFO') {
     try {
         let postData = content != null ? content : {};
         // 判断是否 ajaxUrl 上报日志
@@ -27,7 +24,9 @@ export default function errorLog(content: object, level: string = 'INFO') {
         }
         postData.version = version
         
-        logger.info(JSON.stringify(postData));
+        // logger.info(JSON.stringify(postData));
+        window.electron.ipcRenderer.sendMessage('setLogger', postData);
+
         let timestamp = new Date().getTime();
         let messages = [
             {
@@ -39,7 +38,7 @@ export default function errorLog(content: object, level: string = 'INFO') {
 
         
         // let user_id = store.get('USER_INFO')?.userId;
-        let user_id = LStorage.getItem('USER_INFO')?.userId;
+        let user_id = (await LStorage.getItem('USER_INFO'))?.userId;
         let soft = 'teacher_live_app';
         let osType = os.type();
         //存储log日志

@@ -30,7 +30,11 @@ export const LStorage = {
     getItem: async (key: string) => {
         const value = await localStorage.getItem(key);
         if (value) {
-            return JSON.parse(value);
+            try {
+                return JSON.parse(value);
+            } catch (error) {
+                return value;
+            }
         }
         return null;
     },
@@ -42,5 +46,34 @@ export const LStorage = {
     },
     removeItem: async (key: string) => {
         return await localStorage.removeItem(key);
+    }
+}
+
+export function timestampToDate (timestamp:number)  {
+    if (timestamp && timestamp > 0) {
+        const date = new Date(timestamp) // 时间戳为10位需*1000，时间戳为13位的话不需乘1000
+        const Y = date.getFullYear()
+        const M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1)
+        const D = date.getDate() < 10 ? '0' + date.getDate() : date.getDate()
+        const h = date.getHours() < 10 ? '0' + date.getHours() : date.getHours()
+        const m = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()
+        // const s = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds()
+        return Y + '/' + M + '/' + D + ' ' + h + ':' + m
+    }
+    else {
+        return '-'
+    }
+}
+
+export function timestampToTime(timestamp: number) {
+    if (timestamp && timestamp > 0) {
+        const date = new Date(timestamp) // 时间戳为10位需*1000，时间戳为13位的话不需乘1000
+        const h = date.getHours() < 10 ? '0' + date.getHours() : date.getHours()
+        const m = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()
+        // const s = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds()
+        return h + ':' + m
+    }
+    else {
+        return '-'
     }
 }
