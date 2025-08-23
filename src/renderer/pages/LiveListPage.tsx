@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Popover, Button, message as Message, Modal } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './LiveListPage.scss';
-// import Store from 'electron-store'
 import { VERSION, npm_env } from '../config/index';
 import {
   GetTodayWhiteBoardLiveByTeacher,
@@ -13,14 +12,8 @@ import {
   LiveUploadLog,
 } from '../api';
 import { timestampToTime, timestampToDate, LStorage } from '../utils/tools';
-// 使用预加载脚本中的 electron API
+import { setValue } from '../reducers/roomConfigSlice';
 
-// const store: any = new Store();
-
-interface LiveListPageParam {
-  history: any;
-  location: any;
-}
 interface LiveSimpleInfoParam {
   live_id: number;
   title: string;
@@ -50,19 +43,26 @@ const liveStatusList: liveStatusItem[] = [
 ];
 const pageSize: string = '18';
 
-function LiveListPage(props: LiveListPageParam) {
+function LiveListPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
+  
+  // 使用Redux状态
   const appState = useSelector((state: any) => state.app);
+  const roomConfig = useSelector((state: any) => state.roomConfig);
+  
   const [loginOut, setLoginOut] = useState<boolean>(false); //退出登录 是否显示
   const [showMoreLive, setShowMoreLive] = useState<boolean>(false); //今日直播是否打开 更多
   const [userInfo, setUserInfo] = useState<any>({}); //当前登录者信息
   const userInfoRef = useRef<any>({});
   const [todayLiveList, setTodayLiveList] = useState([]); //今日直播 列表
 
-  const liveStatusRef = useRef<number>(props?.location?.state?.liveStatus || 1); // 选中直播状态
+  // 从location.state中获取参数，如果没有则使用默认值
+  const locationState = location.state as any || {};
+  const liveStatusRef = useRef<number>(locationState.liveStatus || 1); // 选中直播状态
   const livePageRef = useRef<string>('1'); // 全部直播分页
-  const sortTypeRef = useRef<number>(props?.location?.state?.sortType || 1); // 列表排序方式
+  const sortTypeRef = useRef<number>(locationState.sortType || 1); // 列表排序方式
   const [unstartCount, setUnstartCount] = useState<number>(0); // 老师所有直播 未开播数量
   const unstartCountRef = useRef<number>(0); // 老师所有直播 未开播数量
   const [livingCount, setLivingCount] = useState<number>(0); //老师所有直播 直播中数量
@@ -151,14 +151,20 @@ function LiveListPage(props: LiveListPageParam) {
     livePageRef.current = '1';
     getTeacherLiveList();
   }
+  
   // 退出登录页
   function handleLoginOut() {
     navigate('/login');
   }
+  
   // 进入直播房间
   function goLiveRoom(roomId: string) {
     const liveStatus = liveStatusRef.current;
     const sortType = sortTypeRef.current;
+    
+    // 使用Redux存储房间信息
+    dispatch(setValue({ key: 'roomInfo', value: { room_id: roomId } }));
+    
     navigate(`/live-room/${roomId}`, {
       state: {
         liveStatus,
@@ -166,6 +172,7 @@ function LiveListPage(props: LiveListPageParam) {
       },
     });
   }
+  
   // 进入直播间
   function handleClickLiveInfoCard(data: LiveSimpleInfoParam) {
     const roomId = data.room_id;
@@ -176,6 +183,15 @@ function LiveListPage(props: LiveListPageParam) {
           ...userInfo,
           roomId,
         });
+        
+        // 使用Redux存储房间信息
+        dispatch(setValue({ key: 'roomInfo', value: { 
+          room_id: roomId,
+          title: data.title,
+          is_test: data.is_test,
+          live_id: data.live_id
+        }}));
+        
         if (res.teacher_uid > 0) {
           Modal.confirm({
             content:
@@ -212,6 +228,7 @@ function LiveListPage(props: LiveListPageParam) {
     ).getTime();
     return `${timestampToDate(start_time)} - ${end_time - startTS > 24 * 60 * 60 * 1000 ? timestampToDate(end_time) : timestampToTime(end_time)}`;
   }
+  
   // 总分页 大于当前 分页 代码还有新数据，需进行接口请求
   function getTeacherLiveListCount() {
     const liveStatusCurrent =
@@ -256,6 +273,11 @@ function LiveListPage(props: LiveListPageParam) {
       Message.error(`上传失败，请手动发送`);
     }
   }
+
+  // 导航到Redux测试页面
+  const goToReduxTest = () => {
+    navigate('/redux-test');
+  };
 
   useEffect(() => {
     const removeListener = window.electron.ipcRenderer.on('getLogUrl', onGetLogUrl);
@@ -304,6 +326,7 @@ function LiveListPage(props: LiveListPageParam) {
       }
     });
   }, []);
+  
   return (
     <div
       className="live-list-wrap"
@@ -327,6 +350,16 @@ function LiveListPage(props: LiveListPageParam) {
           >
             上报日志
           </Button> */}
+          {
+          <Button
+            className="upload-btn"
+            type="text"
+            size="small"
+            onClick={goToReduxTest}
+          >
+            Redux测试
+          </Button>
+          }
           <div
             className="refresh"
             onClick={() => {

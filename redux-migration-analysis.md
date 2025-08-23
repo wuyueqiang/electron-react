@@ -378,8 +378,8 @@ teacher-electron 项目中包含复杂的设备管理逻辑，包括摄像头、
 - [ ] 创建基础 Redux Toolkit store 配置
 - [ ] 迁移 roomConfig reducer 到 Redux Toolkit slice
 - [ ] 迁移 ysLiveClient reducer 到 Redux Toolkit slice
-- [ ] 实现核心状态选择器（selectors）
-- [ ] 迁移基本的同步 action creators
+- [x] 实现核心状态选择器（selectors）
+- [x] 迁移基本的同步 action creators
 
 ### 4.3 异步逻辑迁移阶段（3-5天）
 

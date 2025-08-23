@@ -1,20 +1,34 @@
-import { configureStore as configureRTKStore } from '@reduxjs/toolkit';
+import { configureStore } from '@reduxjs/toolkit';
+import { createHashHistory } from 'history';
+import { createReduxHistoryContext } from 'redux-first-history';
+import roomConfigReducer from '../reducers/roomConfigSlice';
+import ysLiveClientReducer from '../reducers/ysLiveClientSlice';
 import appReducer from '../reducers/appReducer';
 
-const configureStore = (preloadedState = {}) => {
-  return configureRTKStore({
+// 创建 history 对象
+const history = createHashHistory();
+const { createReduxHistory, routerMiddleware, routerReducer } = createReduxHistoryContext({
+  history
+});
+
+// 保持与原来相同的导出方式
+const configureAppStore = (preloadedState = {}) => {
+  const store = configureStore({
     reducer: {
+      router: routerReducer,
+      roomConfig: roomConfigReducer,
+      ysLiveClient: ysLiveClientReducer,
       app: appReducer,
     },
-    preloadedState,
     middleware: (getDefaultMiddleware) => {
-      // 使用默认中间件
       const middlewares = getDefaultMiddleware();
       
-      // 开发环境下添加 logger
+      // 添加 router middleware
+      middlewares.push(routerMiddleware);
+      
+      // 开发环境添加 logger
       if (process.env.NODE_ENV !== 'production') {
         try {
-          // 动态导入 redux-logger，避免类型问题
           const { createLogger } = require('redux-logger');
           return middlewares.concat(createLogger({ collapsed: true }));
         } catch (e) {
@@ -24,7 +38,17 @@ const configureStore = (preloadedState = {}) => {
       
       return middlewares;
     },
+    preloadedState,
   });
+  
+  return store;
 };
 
-export default configureStore;
+// 创建 redux 增强的 history
+const reduxHistory = createReduxHistory(configureAppStore());
+
+// 导出默认函数，保持与原来的导出方式一致
+export default configureAppStore;
+
+// 导出 history 供其他组件使用
+export { reduxHistory as history };

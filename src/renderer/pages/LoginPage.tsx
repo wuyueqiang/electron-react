@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Form, Input, message as Message, Modal } from 'antd';
+import { Form, Input, message as Message, Modal, Button } from 'antd';
 import { connect } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import './LoginPage.scss';
@@ -91,6 +91,11 @@ function LoginPage() {
         Message.warning(`当前网络不可用，请检查网络状态`);
       });
   }
+
+  // 导航到Redux测试页面
+  const goToReduxTest = () => {
+    navigate('/redux-test');
+  };
 
   useEffect(() => {
     async function fetchDeviceId() {
@@ -227,6 +232,13 @@ function LoginPage() {
             </div>
           ) : null}
           <button className="login-btn">登录</button>
+
+          {/* Redux测试按钮 */}
+          <div style={{ marginTop: '20px', textAlign: 'center' }}>
+            <Button type="link" onClick={goToReduxTest}>
+              Redux测试页面
+            </Button>
+          </div>
 
           {/* <Update></Update> */}
         </Form>

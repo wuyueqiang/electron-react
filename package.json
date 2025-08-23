@@ -121,10 +121,12 @@
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.3.0",
     "redux": "^5.0.1",
+    "redux-first-history": "^5.2.0",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^3.1.0",
     "source-map-support": "^0.5.21",
     "stream-browserify": "^3.0.0",
+    "trtc-electron-sdk": "^11.4.503",
     "util": "^0.12.5",
     "uuid": "^11.1.0"
   },
