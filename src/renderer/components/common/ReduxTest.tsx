@@ -21,7 +21,7 @@ const ReduxTest: React.FC = () => {
         <TabPane tab="RoomConfig 测试" key="roomConfig">
           <RoomConfigTest />
         </TabPane>
-        <TabPane tab="YsLiveClient 测试" key="ysLiveClient">
+        <TabPane tab="异步操作测试" key="ysLiveClient">
           <YsLiveClientTest />
         </TabPane>
       </Tabs>

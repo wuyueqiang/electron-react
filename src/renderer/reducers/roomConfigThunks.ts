@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { setValue, setList, setDevice } from './roomConfigSlice';
 import { LIVE_STAGE, LIVE_ACTIONS, OPERATE_ACTION } from '../vars/room-vars';
-import Store from 'electron-store';
+import { LStorage } from '../utils/tools';
 import errorLog from '../utils/errorLog';
 import { RootState } from './index';
 
@@ -17,7 +17,6 @@ import {
   CancelCommonMixStream
 } from '../api';
 
-const store = new Store();
 
 // 开始直播推流
 export const startLiveAction = createAsyncThunk(
@@ -26,7 +25,7 @@ export const startLiveAction = createAsyncThunk(
     const state = getState() as RootState;
     const { roomConfig } = state;
     const { roomInfo } = roomConfig;
-    const userInfo = store.get('USER_INFO');
+    const userInfo = LStorage.getItem('USER_INFO') || {};
     
     try {
       // 延迟2秒确保推流开始
@@ -51,7 +50,7 @@ export const setLog = createAsyncThunk(
     const { action, logParams = {} } = params;
     const state = getState() as RootState;
     const { roomConfig } = state;
-    const userInfo = store.get('USER_INFO');
+    const userInfo = LStorage.getItem('USER_INFO') || {};
 
     const isString = typeof action === 'string';
     
@@ -95,7 +94,7 @@ export const setOperateLog = createAsyncThunk(
     const { operate_action_code, after_action_content = {} } = params;
     const state = getState() as RootState;
     const { roomConfig } = state;
-    const userInfo = store.get('USER_INFO');
+    const userInfo = LStorage.getItem('USER_INFO') || {};
     
     const param = {
       room_id: roomConfig?.roomInfo?.room_id,
@@ -125,7 +124,7 @@ export const updateMixLiveAction = createAsyncThunk(
     const state = getState() as RootState;
     const { roomConfig } = state;
     const { roomInfo, isOpenCamera, cameraPosition, isShareScreen, videoCallUserList } = roomConfig;
-    const userInfo = store.get('USER_INFO');
+    const userInfo = LStorage.getItem('USER_INFO') || {};
     
     const main_stream = isShareScreen ? 1 : 0; // 1屏幕分享 0白板
     const connect_user_info = videoCallUserList.map((user: any) => ({
@@ -163,7 +162,7 @@ export const startBoardPushAction = createAsyncThunk(
     const state = getState() as RootState;
     const { roomConfig } = state;
     const { roomInfo } = roomConfig;
-    const userInfo = store.get('USER_INFO');
+    const userInfo = LStorage.getItem('USER_INFO') || {};
     
     try {
       const res = await StartWhiteBoardPush(roomInfo.room_id, userInfo.userId, userInfo.app);
@@ -185,7 +184,7 @@ export const startStreamMix = createAsyncThunk(
     const state = getState() as RootState;
     const { roomConfig } = state;
     const { roomInfo, isOpenCamera, isStart } = roomConfig;
-    const userInfo = store.get('USER_INFO');
+    const userInfo = LStorage.getItem('USER_INFO') || {};
 
     if (isStart) {
       try {
@@ -216,7 +215,7 @@ export const stopStreamMix = createAsyncThunk(
     const state = getState() as RootState;
     const { roomConfig } = state;
     const { roomInfo, isStart } = roomConfig;
-    const userInfo = store.get('USER_INFO');
+    const userInfo = LStorage.getItem('USER_INFO') || {};
 
     if (isStart) {
       try {
