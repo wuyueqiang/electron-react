@@ -51,6 +51,7 @@ function LiveListPage() {
   // 使用Redux状态
   const appState = useSelector((state: any) => state.app);
   const roomConfig = useSelector((state: any) => state.roomConfig);
+  const routeParams = useSelector((state: any) => state.router?.location?.pathname);
   
   const [loginOut, setLoginOut] = useState<boolean>(false); //退出登录 是否显示
   const [showMoreLive, setShowMoreLive] = useState<boolean>(false); //今日直播是否打开 更多
