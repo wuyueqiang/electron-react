@@ -221,3 +221,49 @@ export const selectDeviceLists = createSelector(
     screenList
   })
 );
+
+// ===========================================
+// 路由状态选择器 (Router Selectors)
+// ===========================================
+export const selectRouter = (state: RootState) => state.router;
+export const selectLocation = (state: RootState) => state.router?.location;
+export const selectCurrentPath = (state: RootState) => state.router?.location?.pathname;
+export const selectQueryParams = (state: RootState) => {
+  const location = state.router?.location;
+  if (!location?.search) return {};
+  
+  const searchParams = new URLSearchParams(location.search);
+  const params: Record<string, string> = {};
+  searchParams.forEach((value, key) => {
+    params[key] = value;
+  });
+  return params;
+};
+
+// 路由参数选择器
+export const selectRouteParams = (state: RootState) => {
+  const location = state.router?.location;
+  if (!location?.pathname) return {};
+  
+  // 解析路径参数，例如 /live-room/:roomId
+  const pathSegments = location.pathname.split('/');
+  const params: Record<string, string> = {};
+  
+  // 这里可以根据实际路由结构来解析参数
+  // 例如：/live-room/123 -> { roomId: '123' }
+  if (pathSegments[1] === 'live-room' && pathSegments[2]) {
+    params.roomId = pathSegments[2];
+  }
+  
+  return params;
+};
+
+// 复合选择器 - 路由状态概览
+export const selectRouteInfo = createSelector(
+  [selectCurrentPath, selectQueryParams, selectRouteParams],
+  (currentPath, queryParams, routeParams) => ({
+    currentPath,
+    queryParams,
+    routeParams
+  })
+);

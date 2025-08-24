@@ -3,6 +3,7 @@ import { Tabs, Button } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import RoomConfigTest from './RoomConfigTest';
 import YsLiveClientTest from './YsLiveClientTest';
+import RouterTest from './RouterTest';
 
 const { TabPane } = Tabs;
 
@@ -23,6 +24,9 @@ const ReduxTest: React.FC = () => {
         </TabPane>
         <TabPane tab="异步操作测试" key="ysLiveClient">
           <YsLiveClientTest />
+        </TabPane>
+        <TabPane tab="路由集成测试" key="router">
+          <RouterTest />
         </TabPane>
       </Tabs>
     </div>
