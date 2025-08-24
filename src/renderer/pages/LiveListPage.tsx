@@ -248,7 +248,7 @@ function LiveListPage() {
 
   function uploadLog() {
     console.log('====uploadLog');
-    window.electron.ipcRenderer.sendMessage('uploadLog');
+    window.electron.ipcRenderer.send('uploadLog');
     setUploadLogDisable(true);
   }
 

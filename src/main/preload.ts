@@ -1,6 +1,8 @@
 // Disable no-unused-vars, broken for spread args
 /* eslint no-unused-vars: off */
-import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
+import { ipcRenderer, IpcRendererEvent } from 'electron';
+// 在window上添加ipcRenderer
+// (window as any).electron.ipcRenderer = ipcRenderer
 
 export type Channels = 'ipc-example' | 'get-device-id' | 'uploadLog' | 'getLogUrl' | 'setLogger';
 
@@ -26,6 +28,6 @@ const electronHandler = {
   getDeviceId: () => ipcRenderer.invoke('get-device-id'),
 };
 
-contextBridge.exposeInMainWorld('electron', electronHandler);
+(window as any).electron = electronHandler;
 
 export type ElectronHandler = typeof electronHandler;

@@ -25,7 +25,7 @@ export default async function errorLog(content: object, level: string = 'INFO') 
         postData.version = version
         
         // logger.info(JSON.stringify(postData));
-        window.electron.ipcRenderer.sendMessage('setLogger', postData);
+        window.electron.ipcRenderer.send('setLogger', postData);
 
         let timestamp = new Date().getTime();
         let messages = [

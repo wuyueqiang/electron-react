@@ -1,9 +1,3 @@
-/**
- * @author Alizeegod
- * @Date 2020-08-10 13:46:34
- * @Description
- *
- * */
 // @ts-ignore
 import { TRTCVideoResolution, TRTCBeautyStyle } from 'trtc-electron-sdk/liteav/trtc_define';
 

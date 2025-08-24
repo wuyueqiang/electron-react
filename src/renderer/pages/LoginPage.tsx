@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import './LoginPage.scss';
 import { getUUID, LStorage } from '../utils/tools';
+import TRTCCloud from 'trtc-electron-sdk';
 
 import IMGS from '../imgs';
 // import Update from '../components/Update';
@@ -126,6 +127,11 @@ function LoginPage() {
     };
   }, []);
 
+  const sendIPCTest = () => {
+    let trtc = TRTCCloud.getTRTCShareInstance();
+    console.log('TRTCCloud.getTRTCShareInstance()', trtc);
+  };
+
   return (
     <div className="login-wrap">
       <img src={IMGS.LOGIN_BG} alt="" className="login-bg" />
@@ -237,6 +243,12 @@ function LoginPage() {
           <div style={{ marginTop: '20px', textAlign: 'center' }}>
             <Button type="link" onClick={goToReduxTest}>
               Redux测试页面
+            </Button>
+          </div>
+
+          <div style={{ marginTop: '20px', textAlign: 'center' }}>
+            <Button type="link" onClick={sendIPCTest}>
+              测试ipc
             </Button>
           </div>
 
