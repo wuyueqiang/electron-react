@@ -44,6 +44,17 @@ const configuration: webpack.Configuration = {
           },
         },
       },
+      {
+        test: /\.node$/,
+        loader: 'native-ext-loader',
+        options: {
+          emit: false,
+          rewritePath:
+            process.env.NODE_ENV === 'production'
+              ? './'
+              : 'node_modules/trtc-electron-sdk/build/Release/'
+        }
+      }
     ],
   },
 
