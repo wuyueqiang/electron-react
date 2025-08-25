@@ -3,8 +3,8 @@ import { LStorage } from './tools';
 // import Store from 'electron-store'
 import { APP_NAME } from '../config/index'
 // const store: any = new Store();
-export const youshuCheckSign = async (data, url, type, ContentType) => {
-    const userInfo = await LStorage.getItem('USER_INFO')||{}
+export const youshuCheckSign = (data, url, type, ContentType) => {
+    const userInfo = LStorage.getItem('USER_INFO')||{}
     //参数定义
     let buff,
         utt = Date.parse(new Date()) / 1000,

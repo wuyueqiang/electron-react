@@ -38,7 +38,7 @@ export default async function errorLog(content: object, level: string = 'INFO') 
 
         
         // let user_id = store.get('USER_INFO')?.userId;
-        let user_id = (await LStorage.getItem('USER_INFO'))?.userId;
+        let user_id = LStorage.getItem('USER_INFO')?.userId;
         let soft = 'teacher_live_app';
         let osType = os.type();
         //存储log日志

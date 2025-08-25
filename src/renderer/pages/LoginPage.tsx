@@ -4,7 +4,8 @@ import { connect } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import './LoginPage.scss';
 import { getUUID, LStorage } from '../utils/tools';
-import TRTCCloud from 'trtc-electron-sdk';
+// import Store from 'electron-store'
+
 
 import IMGS from '../imgs';
 // import Update from '../components/Update';
@@ -32,7 +33,7 @@ function LoginPage() {
     })
       .then(async (res) => {
         if (res.code == 1) {
-          await LStorage.setItem('USER_INFO', {
+          LStorage.setItem('USER_INFO', {
             userId: res.data.user_id,
             password: password,
             nick: res.data.nickname,
@@ -43,7 +44,7 @@ function LoginPage() {
             liveToken: res.data.remember_token,
           });
           setTimeout(async () => {
-            console.log('====', await LStorage.getItem('USER_INFO'));
+            console.log('====', LStorage.getItem('USER_INFO'));
 
             navigate('/live-list');
           }, 1000);
@@ -98,45 +99,44 @@ function LoginPage() {
     navigate('/redux-test');
   };
 
-  useEffect(() => {
-    async function fetchDeviceId() {
-      if (!(await LStorage.getItem('DEVICE_ID'))) {
-        try {
-          // 使用主进程提供的方法获取设备 ID
-          const deviceId = await window.electron.getDeviceId();
-          LStorage.setItem('DEVICE_ID', deviceId);
-        } catch (error) {
-          // 如果获取失败，则使用 UUID
-          LStorage.setItem('DEVICE_ID', getUUID());
-        }
-      }
-      const userInfo = (await LStorage.getItem('USER_INFO')) || {};
-      await LStorage.setItem('USER_INFO', {
-        ...userInfo,
-        liveToken: '',
-      });
-      curForm.current.setFieldsValue({
-        mobile: userInfo.mobile || '',
-        password: userInfo.password || '',
-      });
-    }
-    fetchDeviceId();
+  // useEffect(() => {
+  //   async function fetchDeviceId() {
+  //     if (!(LStorage.getItem('DEVICE_ID'))) {
+  //       try {
+  //         // 使用主进程提供的方法获取设备 ID
+  //         const deviceId = await window.electron.getDeviceId();
+  //         LStorage.setItem('DEVICE_ID', deviceId);
+  //       } catch (error) {
+  //         // 如果获取失败，则使用 UUID
+  //         LStorage.setItem('DEVICE_ID', getUUID());
+  //       }
+  //     }
+  //     const userInfo = (LStorage.getItem('USER_INFO')) || {};
+  //     LStorage.setItem('USER_INFO', {
+  //       ...userInfo,
+  //       liveToken: '',
+  //     });
+  //     curForm.current.setFieldsValue({
+  //       mobile: userInfo.mobile || '',
+  //       password: userInfo.password || '',
+  //     });
+  //   }
+  //   fetchDeviceId();
 
-    return () => {
-      // 清理工作
-    };
-  }, []);
+  //   return () => {
+  //     // 清理工作
+  //   };
+  // }, []);
 
-  const sendIPCTest = () => {
-    let trtc = TRTCCloud.getTRTCShareInstance();
-    console.log('TRTCCloud.getTRTCShareInstance()', trtc);
+  const goToRoom = () => {
+    navigate('/live-room/1755694599');
   };
 
   return (
     <div className="login-wrap">
-      <img src={IMGS.LOGIN_BG} alt="" className="login-bg" />
+      {/* <img src={IMGS.LOGIN_BG} alt="" className="login-bg" /> */}
       <div className="login-container">
-        <img src={IMGS.LOGIN_LOGO_2} alt="loginlogo" className="title" />
+        {/* <img src={IMGS.LOGIN_LOGO_2} alt="loginlogo" className="title" /> */}
         <div className="login-nav">
           <div
             onClick={() => setLoginType('mobile_code')}
@@ -177,7 +177,7 @@ function LoginPage() {
                     </Form.Item> */}
           <Form.Item
             name="mobile"
-            label="手机号 "
+            // label="手机号 "
             colon={false}
             shouldUpdate
             rules={[
@@ -206,7 +206,7 @@ function LoginPage() {
           {loginType == 'mobile' ? (
             <Form.Item
               name="password"
-              label="密码"
+              // label="密码"
               colon={false}
               shouldUpdate
               rules={[{ required: true, message: '请输入密码!' }]}
@@ -247,8 +247,8 @@ function LoginPage() {
           </div>
 
           <div style={{ marginTop: '20px', textAlign: 'center' }}>
-            <Button type="link" onClick={sendIPCTest}>
-              测试ipc
+            <Button type="link" onClick={goToRoom}>
+              测试room
             </Button>
           </div>
 

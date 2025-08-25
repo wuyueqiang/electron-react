@@ -289,8 +289,8 @@ function LiveListPage() {
 
   // 加载用户信息
   useEffect(() => {
-    async function loadUserInfo() {
-      const userData = await LStorage.getItem('USER_INFO');
+    function loadUserInfo() {
+      const userData = LStorage.getItem('USER_INFO');
       console.log('====userData', userData);
       setUserInfo(userData || {});
     }

@@ -28,7 +28,7 @@ const service = axios.create({
 });
 
 service.interceptors.request.use(async function (config) {
-    config.headers['Grpc-Metadata-device_id'] = await LStorage.getItem('DEVICE_ID')||'';
+    config.headers['Grpc-Metadata-device_id'] = LStorage.getItem('DEVICE_ID')||'';
     config.headers['Grpc-Metadata-ua'] = navigator.userAgent;
     config.headers['Grpc-Metadata-version'] = pkg.version;
     return config;
@@ -45,9 +45,9 @@ export default async (params: AxiosParams) => {
     let requesurl = `${baseUrl}${path}`;
     let uriObj = Object.assign({}, data);
     
-    const userInfo = await LStorage.getItem('USER_INFO') || {};
+    const userInfo = LStorage.getItem('USER_INFO') || {};
     // @ts-ignore
-    let url = await youshuCheckSign(uriObj, requesurl, type, contentType)
+    let url = youshuCheckSign(uriObj, requesurl, type, contentType)
     let responseJson = await service({
         method: type,
         // url: requesurl,

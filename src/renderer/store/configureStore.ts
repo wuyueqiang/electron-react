@@ -21,7 +21,15 @@ const configureAppStore = (preloadedState = {}) => {
       app: appReducer,
     },
     middleware: (getDefaultMiddleware) => {
-      const middlewares = getDefaultMiddleware();
+      const middlewares = getDefaultMiddleware({
+        serializableCheck: {
+          ignoredActions: ['ysLiveClient/initYsLiveClient'],
+          ignoredPaths: ['ysLiveClient'],
+        },
+        immutableCheck: {
+          ignoredPaths: ['ysLiveClient'],
+        },
+      });
       
       // 添加 router middleware
       middlewares.push(routerMiddleware);

@@ -259,7 +259,7 @@ export const setDeviceThunk = createAsyncThunk(
             ...device,
             ...speaker
           };
-          ysLiveClient.setCurrentSpeaker(device.deviceId);
+          (ysLiveClient as any).setCurrentSpeaker(device.deviceId);
           break;
         case "camera":
           let camera = cameraList.find((item: any) => item.deviceId === deviceId);
@@ -267,7 +267,7 @@ export const setDeviceThunk = createAsyncThunk(
             ...device,
             ...camera
           };
-          ysLiveClient.setCurrentCamera(device.deviceId);
+          (ysLiveClient as any).setCurrentCamera(device.deviceId);
           try {
             const cameraParam = {
               room_id: roomConfig?.roomInfo?.room_id,
@@ -292,7 +292,7 @@ export const setDeviceThunk = createAsyncThunk(
             ...device,
             ...mic
           };
-          ysLiveClient.setCurrentMic(device.deviceId);
+          (ysLiveClient as any).setCurrentMic(device.deviceId);
           try {
             const micParam = {
               room_id: roomConfig?.roomInfo?.room_id,

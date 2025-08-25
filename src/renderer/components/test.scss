@@ -1,0 +1,303 @@
+.test-wrap {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 99;
+    background: rgba(0,0,0,.5);
+    .test-content {
+        width: 640px;
+        height: 520px;
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        border-radius: 10px;
+        transform: translate(-50%, -50%);
+        z-index: 99;
+        padding-top: 30px;
+        background: #fff;
+        .ant-radio-checked .ant-radio-inner {
+            border-color: #f4742a;
+        }
+        .ant-radio-inner::after {
+            background-color: #f4742a;
+        }
+        .ant-radio:hover .ant-radio-inner {
+            border-color: #f4742a;
+        }
+        .test-close {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        .test-steps {
+            width: 500px;
+            margin: 0 auto 20px;
+            .device {
+                display: flex;
+                justify-content: center;
+                font-size: 50px;
+                line-height: 1;
+                .item {
+                    margin: 0 5px;
+                    position: relative;
+                    .succeed, .failed {
+                        font-size: 20px;
+                        position: absolute;
+                        right: 0;
+                        bottom: 0;
+                    }
+                }
+            }
+        }
+        .step-btns {
+            display: flex;
+            justify-content: center;
+            button {
+                width: 130px;
+                height: 36px;
+                display: block;
+                border: 0;
+                outline: none;
+                margin: 5px 5px 0;
+                text-align: center;
+                line-height: 34px;
+                font-size: 17px;
+                color: #F4742A;
+                border:1px solid rgba(244,116,42,1);
+                border-radius:5px;
+                cursor: pointer;
+                background-color: #fff;
+            }
+        }
+        .test-step0 {
+            text-align: center;
+            h1 {
+                font-size: 26px;
+                color: #151515;
+                font-weight:500;
+            }
+            h3 {
+                font-size: 18px;
+                color: #151515;
+                font-weight:500;
+            }
+            h4 {
+                font-size: 14px;
+                color: #AAADB4;
+                font-weight:400;
+            }
+            h2 {
+                font-size: 16px;
+                color: #AAADB4;
+                font-weight: 400;
+                margin-top: 50px;
+            }
+            .device {
+                display: flex;
+                justify-content: center;
+                font-size: 50px;
+                .item {
+                    margin: 0 5px;
+                    position: relative;
+                    .succeed, .failed {
+                        font-size: 20px;
+                        position: absolute;
+                        right: 0;
+                        bottom: 0;
+                    }
+                }
+            }
+            button {
+                width: 200px;
+                height: 44px;
+                display: block;
+                border: 0;
+                outline: none;
+                margin: 50px auto 0;
+                text-align: center;
+                line-height: 44px;
+                font-size: 24px;
+                color: #FFFFFF;
+                background:linear-gradient(270deg,rgba(252,111,0,1) 0%,rgba(255,150,26,1) 100%);
+                box-shadow:0px 4px 22px 0px rgba(250,100,0,0.3);
+                border-radius:14px;
+                cursor: pointer;
+            }
+        }
+        .test-step1, .test-step2, .test-step3 {
+            width: 400px;
+            margin: 0 auto;
+        }
+        .test-step1 {
+            #camera-test-view {
+                width: 320px;
+                height: 180px;
+                margin: 10px auto;
+                canvas {
+                    max-width: 100%;
+                    max-height: 100%;
+                    transform: scale(1) !important;
+                }
+            }
+            .step1-text {
+                text-align: center;
+            }
+            .step-btns {
+                text-align: center;
+            }
+            .step1-btns .ant-btn {
+                margin: 0 20px;
+            }
+        }
+        .test-step2 {
+            .step2-btn {
+                margin: 20px auto;
+                display: block;
+            }
+            .step1-text {
+                text-align: center;
+                margin: 20px auto;
+            }
+        }
+        .test-step3 {
+            .ant-progress {
+                margin: 0 auto;
+            }
+        }
+        .text-step5 {
+            width: 400px;
+            margin: 0 auto;
+            h2 {
+                font-size: 23px;
+                color: #151515;
+                font-weight:500;
+                text-align: center;
+            }
+            .step-text {
+                margin: 10px auto;
+                .fail {
+                    color: #FF7B61;
+                }
+            }
+            .step5-top {
+                width: 100%;
+                background: #F6F7FA;
+                padding: 10px 20px;
+                box-sizing: border-box;
+                border-radius: 14px;
+                display: flex;
+                justify-content: space-between;
+                div {
+                    font-size: 14px;
+                    line-height: 1.9;
+                    color: #151515;
+                    &.top-right {
+                        color: #AAADB4;
+                    }
+                    p {
+                        margin: 0;
+                    }
+                }
+            }
+            .step5-bottom {
+                .bot-item {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    font-size: 30px;
+                    margin: 10px 0;
+                    .item-lf {
+                        display: flex;
+                        align-items: center;
+                        p {
+                            margin-left: 5px;
+                        }
+                    }
+                    .item-rf {
+                        display: flex;
+                        align-items: center;
+                        .succeed, .failed {
+                            font-size: 20px;
+                            margin-left: 5px;
+                        }
+                        p {
+                            color: #AAADB4;
+                        }
+                    }
+                    p {
+                        font-size: 14px;
+                        color: #151515;
+                        margin: 0;
+                    }
+                }
+            }
+        }
+        .test-netlist {
+            width: 400px;
+            margin: 0 auto;
+            padding: 20px 30px 80px;
+            box-sizing: border-box;
+            li {
+                position: relative;
+                display: flex;
+                justify-content: space-between;
+                .warning{
+                    color: #EA7568;
+                    padding-right: 18px;
+                    background-image: url('http://feed.youshu.cc/readwith/media/picture/61dcf534c4a84.png');
+                    background-position: right center;
+                    background-repeat: no-repeat;
+                    background-size: 16px 16px;
+                }
+                .waning-tip {
+                    background: rgba(234, 117, 104, 0.1);
+                    font-size: 11px;
+                    font-family: PingFangTC-Regular, PingFangTC;
+                    font-weight: 400;
+                    color: #EA7568;
+                    line-height: 14px;
+                    padding: 5px 10px;
+                    border-radius: 6px;
+                    position: absolute;
+                    right: 0;
+                    top: 30px;
+                    &::after {
+                        box-sizing: content-box;
+                        content: '';
+                        display: block;
+                        width: 0;
+                        height: 0;
+                        border-right: 6px solid transparent;
+                        border-left: 6px solid transparent;
+                        border-bottom: 6px solid rgba(234, 117, 104, 0.1);
+                        position: absolute;
+                        top: -6px;
+                        right: 21px;
+                    }
+                }
+            }
+        }
+
+        .step-volume {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            p {
+                width: 90px;
+                margin: 0;
+            }
+            .ant-slider {
+                width: 100%;
+            }
+        }
+        .step-text {
+            text-align: center;
+            margin: 20px auto;
+        }
+    }
+}

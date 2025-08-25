@@ -27,8 +27,8 @@ export const getUUID = () => {
 }
 // async
 export const LStorage = {
-    getItem: async (key: string) => {
-        const value = await localStorage.getItem(key);
+    getItem: (key: string) => {
+        const value = localStorage.getItem(key);
         if (value) {
             try {
                 return JSON.parse(value);
@@ -38,14 +38,16 @@ export const LStorage = {
         }
         return null;
     },
-    setItem: async (key: string, value: string | object) => {
+    setItem: (key: string, value: string | object) => {
         if (typeof value === 'object') {
             value = JSON.stringify(value);
         }
-        return await localStorage.setItem(key, value as string);
+        localStorage.setItem(key, value as string);
+        return true;
     },
-    removeItem: async (key: string) => {
-        return await localStorage.removeItem(key);
+    removeItem: (key: string) => {
+        localStorage.removeItem(key);
+        return true;
     }
 }
 
