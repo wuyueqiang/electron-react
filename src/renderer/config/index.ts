@@ -83,8 +83,8 @@ if (WebEnv() == 'local') {
 
 
 
-if (process.env.START_HOT) {
-    RESOURCE_PATH = __dirname + '/../resources';
+if (process.env.NODE_ENV === 'development') {
+    RESOURCE_PATH = __dirname + '/../../assets';
 } else {
     RESOURCE_PATH = process.resourcesPath;
 }

@@ -141,7 +141,12 @@ const roomConfigSlice = createSlice({
     // 替代 SET_DEVICE action
     setDevice: (state, action: PayloadAction<{ name: string; device: any }>) => {
       const { name, device } = action.payload;
-      state[name] = device;
+      // 合并设备属性而不是完全替换
+      if (state[name]) {
+        state[name] = { ...state[name], ...device };
+      } else {
+        state[name] = device;
+      }
     },
     
     // 窗口大小调整

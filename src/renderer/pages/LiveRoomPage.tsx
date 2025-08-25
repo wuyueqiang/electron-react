@@ -144,6 +144,8 @@ function LiveRoomPage() {
     // 初始化设备
     const cameraListData = ysLiveClient.getCameraList();
     const speakerListData = ysLiveClient.getSpeakerList();
+    console.log('===speakerListData', speakerListData);
+    
     const micListData = ysLiveClient.getMicList();
     dispatch(setList({ name: 'camera', list: cameraListData }));
     dispatch(setList({ name: 'speaker', list: speakerListData }));
@@ -159,12 +161,17 @@ function LiveRoomPage() {
     );
     let curSpeaker: any = ysLiveClient.getCurrentSpeaker();
     let curSpeakerVolume: number = ysLiveClient.getAudioPlayoutVolume();
+    console.log('===curSpeaker', curSpeaker);
+    console.log('===curSpeakerVolume', curSpeakerVolume);
+    
     dispatch(
       setDevice({
         name: 'speaker',
         device: {
           deviceId: curSpeaker.deviceId,
           volume: curSpeakerVolume,
+          deviceName: curSpeaker.deviceName,
+          isOpen: true
         },
       }),
     );
@@ -175,6 +182,8 @@ function LiveRoomPage() {
         device: {
           deviceId: curMic.deviceId,
           volume: 0,
+          deviceName: curMic.deviceName,
+          isOpen: true
         },
       }),
     );

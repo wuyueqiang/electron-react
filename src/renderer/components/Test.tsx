@@ -8,7 +8,8 @@ var os = require('os');
 // import { execSync } from 'child_process';
 import publicIp from 'public-ip';
 import { LStorage } from '../utils/tools';
-
+import { useSelector } from 'react-redux';
+import { selectSpeaker } from '../reducers/index';
 import ImgIcon from '../components/ImgIcon';
 
 import {
@@ -52,11 +53,14 @@ export default function Test(props: TestPropsParam) {
     speakerList,
     micList,
     camera,
-    speaker,
+    // speaker,
     mic,
     imIsLogin,
     isMirror,
   } = roomConfig;
+  const speaker = useSelector(selectSpeaker);
+
+console.log('===speaker', speaker);
 
   const [curMicVolume, setMicVolume] = useState(0);
   const [showBtn, setShowBtn] = useState(false);
@@ -112,8 +116,8 @@ export default function Test(props: TestPropsParam) {
 
   // 开始扬声器测试
   function startSpeakerTest() {
-    // console.log(RESOURCE_PATH)
-    ysLiveClient.startSpeakerTest(RESOURCE_PATH + '/test.mp3');
+    console.log(RESOURCE_PATH + '/test.mp3')
+    ysLiveClient.startSpeakerDeviceTest(RESOURCE_PATH + '/test.mp3');
   }
 
   // 监听扬声器测试结果
@@ -601,7 +605,8 @@ export default function Test(props: TestPropsParam) {
         {step == 2 ? (
           <div className="test-step2">
             <div className="step-select">
-              <p className="step-label">选择扬声器</p>
+              <p className="step-label">选择扬声器{speaker.deviceId}</p>
+              
               <Select
                 value={speaker.deviceId}
                 onChange={setSpeaker}
