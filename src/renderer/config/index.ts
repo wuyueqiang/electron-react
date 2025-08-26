@@ -70,13 +70,19 @@ if (WebEnv() == 'local') {
 } else {
     npm_env = 'prod';
     APP_NAME = 'live_teacher';
-    LIVE_URL = 'http://live1.youshu.cc';
-    READWITH_URL = 'http://gondu.youshu.cc';
-    XLOG_HOST = 'https://xlog.youshu.cc';
-    YOUSHU_URL = 'http://gongdu.youshu.cc'
-    SENSORS_SERVER_URL = 'https://sd.youshu.cc:8106/sa?project=production'
-    UPDATE_URL = 'https://media.youshu.cc/liveInstall/'
-
+    // LIVE_URL = 'http://live1.youshu.cc';
+    // READWITH_URL = 'http://gondu.youshu.cc';
+    // XLOG_HOST = 'https://xlog.youshu.cc';
+    // YOUSHU_URL = 'http://gongdu.youshu.cc'
+    // SENSORS_SERVER_URL = 'https://sd.youshu.cc:8106/sa?project=production'
+    // UPDATE_URL = 'https://media.youshu.cc/liveInstall/'
+    LIVE_URL = 'http://live.laidan.com';
+    READWITH_URL = 'http://gondu.laidan.com';
+    XLOG_HOST = 'https://xlog.laidan.com'
+    YOUSHU_URL = 'https://gongdu.laidan.com'
+    SENSORS_SERVER_URL = 'https://sd.youshu.cc:8106/sa?project=default'
+    UPDATE_URL = 'https://media.youshu.cc/liveInstall_rd/'
+    
     LUBAN_KEY = ''
 }
 
