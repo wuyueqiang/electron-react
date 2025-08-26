@@ -2,9 +2,11 @@
  * Base webpack config used across other specific configs
  */
 
+import path from 'path';
 import webpack from 'webpack';
 import TsconfigPathsPlugins from 'tsconfig-paths-webpack-plugin';
 import NodePolyfillPlugin from 'node-polyfill-webpack-plugin';
+import CopyWebpackPlugin from 'copy-webpack-plugin';
 import webpackPaths from './webpack.paths';
 import { dependencies as externals } from '../../release/app/package.json';
 
@@ -94,7 +96,10 @@ const configuration: webpack.Configuration = {
   },
 
   plugins: [
-    new webpack.EnvironmentPlugin({ NODE_ENV: 'production' }),
+    new webpack.EnvironmentPlugin({ 
+      NODE_ENV: 'production',
+      WEB_ENV: process.env.WEB_ENV || 'prod'
+    }),
     new NodePolyfillPlugin(),
     new NodeProtocolPlugin(),
     // 提供 process 对象
@@ -107,6 +112,15 @@ const configuration: webpack.Configuration = {
       'process.env': JSON.stringify(process.env),
       'process.browser': true,
       'process.type': JSON.stringify('renderer')
+    }),
+    // 复制 libs 目录到输出目录
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: path.join(webpackPaths.srcRendererPath, 'libs'),
+          to: 'libs'
+        }
+      ]
     })
   ],
 };

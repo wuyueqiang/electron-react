@@ -19,13 +19,13 @@ import { resolveHtmlPath } from './util';
 import os from 'os';
 import { execSync } from 'child_process';
 
-class AppUpdater {
-  constructor() {
-    logger.transports.file.level = 'info';
-    autoUpdater.logger = logger;
-    autoUpdater.checkForUpdatesAndNotify();
-  }
-}
+// class AppUpdater {
+//   constructor() {
+//     logger.transports.file.level = 'info';
+//     autoUpdater.logger = logger;
+//     autoUpdater.checkForUpdatesAndNotify();
+//   }
+// }
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -291,7 +291,7 @@ const createWindow = async () => {
 
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
-  new AppUpdater();
+  // new AppUpdater();
 };
 
 /**

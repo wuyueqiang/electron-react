@@ -7,6 +7,40 @@
       content="script-src 'self' 'unsafe-inline'; worker-src 'self' blob:;"
     />
     <title>客户端</title>
+    <script>
+      (() => {
+        // 根据环境动态加载 libs 文件
+        const isDev = process.env.NODE_ENV === 'development';
+        const basePath = isDev ? './libs' : './libs';
+        
+        // 加载 CSS 文件
+        const cssFiles = [
+          'video-js.min.css',
+          'swiper-bundle.min.css'
+        ];
+        
+        cssFiles.forEach(file => {
+          const link = document.createElement('link');
+          link.rel = 'stylesheet';
+          link.href = `${basePath}/${file}`;
+          document.head.appendChild(link);
+        });
+        
+        // 加载 JS 文件
+        const jsFiles = [
+          'video.min.js',
+          'axios.min.js',
+          'cos.5.1.0.min.js',
+          'TEduBoard.2.7.2.min.js'
+        ];
+        
+        jsFiles.forEach(file => {
+          const script = document.createElement('script');
+          script.src = `${basePath}/${file}`;
+          document.head.appendChild(script);
+        });
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

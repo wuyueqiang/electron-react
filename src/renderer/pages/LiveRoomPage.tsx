@@ -39,6 +39,7 @@ import {
   selectSpeakerList,
   selectIsMirror,
   selectTestVisibility,
+  selectLiveStage,
   selectScreenList,
   selectCameraPosition,
   selectIsShareScreen,
@@ -57,7 +58,10 @@ import {
 import { initYsLiveClient } from '../reducers/ysLiveClientSlice';
 import { LStorage } from '../utils/tools';
 import { enterLiveRoom, TeacherQuitRoom, SaveTeacherAvDevice } from '../api';
-import { startBoardPushAction } from '../reducers/roomConfigThunks';
+import {
+  startBoardPushAction,
+  updateMixLiveAction,
+} from '../reducers/roomConfigThunks';
 import Test from '../components/Test';
 import Board from '../components/Board';
 import { handleDeviceChange } from '../utils/deviceChangeHandler';
@@ -86,6 +90,7 @@ function LiveRoomPage() {
   const roomConfig = useSelector(selectRoomConfig);
   const { roomInfo } = roomConfig;
   const isStart = useSelector(selectIsStart);
+  const liveStage = useSelector(selectLiveStage);
   const isTested = useSelector(selectIsTested);
   const cameraList = useSelector(selectCameraList);
   const micList = useSelector(selectMicList);
@@ -435,6 +440,47 @@ function LiveRoomPage() {
       });
   }
 
+  // 摄像头位置设置
+  function setCameraPosition(item: any) {
+    // 正在当前的位置 return不处理 全屏除外
+    if (
+      item.position == cameraPositionRef.current.position &&
+      item.position != 'fullScreen'
+    )
+      return;
+    // 当前为全屏
+    if (cameraPositionRef.current.position == 'fullScreen') {
+      console.log('退出全屏');
+      // 退出全屏/在全屏状态直接切换位置
+      let position = item.position == 'fullScreen' ? CameraPositions[1] : item;
+      dispatch(
+        setValue({
+          key: 'cameraPosition',
+          value: item.position == 'fullScreen' ? CameraPositions[1] : item,
+        }),
+      );
+      // dispatch(
+      //   setLog(LIVE_ACTIONS.anchorSetCameraPosition, {
+      //     position: position?.position,
+      //     label: position?.label,
+      //   }),
+      // );
+    } else {
+      if (item.position == 'fullScreen') {
+        console.log('进入全屏');
+      }
+      dispatch(setValue({ key: 'cameraPosition', value: item }));
+      // dispatch(
+      //   setLog(LIVE_ACTIONS.anchorSetCameraPosition, {
+      //     position: item?.position,
+      //     label: item?.label,
+      //   }),
+      // );
+    }
+    // 切换到相应位置log
+    dispatch(updateMixLiveAction() as any);
+  }
+
   useEffect(() => {
     isStartRef.current = isStart;
     return () => {};
@@ -647,23 +693,24 @@ function LiveRoomPage() {
           ></Pendant>
         ) : null} */}
       </div>
-
-      <button className="back-btn" onClick={() => navigate('/login')}>
-        back
-      </button>
-      <h1>LiveRoomPage</h1>
-      <button onClick={() => startLivePush(false)}>startLivePush</button>
-      <div
-        id="room-camera-view"
-        style={{ width: '100px', height: '100px' }}
-      ></div>
-      <button
-        onClick={() =>
-          dispatch(setValue({ key: 'testVisibility', value: true }))
-        }
-      >
-        testVisibility
-      </button>
+      <div style={{ position: 'fixed', top: 0, left: 0, zIndex: 1000 }}>
+        <button className="back-btn" onClick={() => navigate('/login')}>
+          back
+        </button>
+        <h1>Room</h1>
+        <button onClick={() => startLivePush(false)}>startLivePush</button>
+        <div
+          id="room-camera-view"
+          style={{ width: '100px', height: '100px' }}
+        ></div>
+        <button
+          onClick={() =>
+            dispatch(setValue({ key: 'testVisibility', value: true }))
+          }
+        >
+          testVisibility
+        </button>
+      </div>
     </div>
   );
 }

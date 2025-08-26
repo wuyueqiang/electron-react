@@ -108,7 +108,7 @@ const configuration: webpack.Configuration = {
      */
     new webpack.EnvironmentPlugin({
       NODE_ENV: 'production',
-      WEB_ENV: process.env.WEB_ENV,
+      WEB_ENV: process.env.WEB_ENV || 'prod',
       DEBUG_PROD: false,
     }),
 
