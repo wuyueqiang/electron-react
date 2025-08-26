@@ -351,21 +351,168 @@ export const setDeviceThunk = createAsyncThunk(
   }
 );
 
-// 设备变更监听
+// 设备变更处理
 export const deviceChangeAction = createAsyncThunk(
   'roomConfig/deviceChange',
-  async (result: { data: any }, { dispatch, getState }) => {
+  async (params: { 
+    result: { data: any }, 
+    ysLiveClient: any 
+  }, { dispatch, getState }) => {
+    const { result, ysLiveClient } = params;
     const state = getState() as RootState;
-    const { roomConfig, ysLiveClient } = state;
+    const { roomConfig } = state;
     const { camera, mic, speaker, cameraList, speakerList, micList } = roomConfig;
 
     const payload = result.data;
-    if (!payload) return null;
+    if (!payload) return;
+
+    const { type, deviceId, state: deviceState } = payload;
+
+    // 设备类型映射
+    const typeObj: any = {
+      0: 'camera',    // TRTCDeviceType.TRTCDeviceTypeCamera
+      1: 'mic',       // TRTCDeviceType.TRTCDeviceTypeMic
+      2: 'speaker',   // TRTCDeviceType.TRTCDeviceTypeSpeaker
+      3: 'unknown'    // TRTCDeviceType.TRTCDeviceTypeUnknown
+    };
+
+    // 设备状态映射
+    const stateObj: any = {
+      0: 'add',       // TRTCDeviceState.TRTCDeviceStateAdd
+      1: 'remove',    // TRTCDeviceState.TRTCDeviceStateRemove
+      2: 'active'     // TRTCDeviceState.TRTCDeviceStateActive
+    };
+
+    // 处理摄像头设备变更
+    if (type === 0) { // TRTCDeviceType.TRTCDeviceTypeCamera
+      dispatch(setList({ name: 'camera', list: ysLiveClient.getCameraList() }));
+      
+      let select = false;
+      if (deviceState === 1) { // TRTCDeviceState.TRTCDeviceStateRemove
+        // 选择设备被移除了，尝试选择其他设备
+        if (camera?.deviceId === deviceId) {
+          select = true;
+        }
+      } else if (deviceState === 0) { // TRTCDeviceState.TRTCDeviceStateAdd
+        // 如果之前没有设备，此时添加了设备，则重新选择
+        if (!camera?.deviceId || camera.deviceId === '') {
+          select = true;
+        }
+        // 显示通知
+        const { notification } = await import('antd');
+        notification.info({
+          message: '通知',
+          description: '您有新的摄像头可以使用！'
+        });
+      }
+
+      if (cameraList.length > 0 && select) {
+        // 重新选择设备后需要重新打开采集摄像头
+        dispatch(setDevice({
+          name: 'camera',
+          device: {
+            deviceId: cameraList[0]?.deviceId || ''
+          }
+        }));
+      }
+    }
     
-    // 这里需要根据实际情况补充设备变更的逻辑
-    // 由于依赖了trtc-electron-sdk的类型定义，这里只提供基本框架
+    // 处理麦克风设备变更
+    else if (type === 1) { // TRTCDeviceType.TRTCDeviceTypeMic
+      dispatch(setList({ name: 'mic', list: ysLiveClient.getMicList() }));
+      
+      let select = false;
+      if (deviceState === 1) { // TRTCDeviceState.TRTCDeviceStateRemove
+        // 选择设备被移除了，尝试选择其他设备
+        if (mic?.deviceId === deviceId) {
+          select = true;
+        }
+      } else if (deviceState === 0) { // TRTCDeviceState.TRTCDeviceStateAdd
+        // 如果之前没有设备，此时添加了设备，则重新选择
+        if (!mic?.deviceId || mic.deviceId === '') {
+          select = true;
+        }
+        // 显示通知
+        const { notification } = await import('antd');
+        notification.info({
+          message: '通知',
+          description: '您有新的麦克风可以使用！'
+        });
+        
+        // 特殊处理：如果是 TRTC 设备，直接选择
+        let curMic: any = ysLiveClient.getCurrentMic();
+        if (curMic?.deviceName?.indexOf('TRTC') !== -1) {
+          dispatch(setDevice({
+            name: 'mic',
+            device: { deviceId }
+          }));
+          return;
+        }
+      } else if (deviceState === 2) { // TRTCDeviceState.TRTCDeviceStateActive
+        console.log('麦克风启用了', deviceId);
+        dispatch(setDevice({
+          name: 'mic',
+          device: { deviceId }
+        }));
+      }
+
+      if (micList.length > 0 && select) {
+        // 重新选择设备后需要重新打开采集摄像头
+        dispatch(setDevice({
+          name: 'mic',
+          device: {
+            deviceId: micList[0]?.deviceId || ''
+          }
+        }));
+      }
+    }
     
-    return payload;
+    // 处理扬声器设备变更
+    else if (type === 2) { // TRTCDeviceType.TRTCDeviceTypeSpeaker
+      dispatch(setList({ name: 'speaker', list: ysLiveClient.getSpeakerList() }));
+      
+      let select = false;
+      if (deviceState === 1) { // TRTCDeviceState.TRTCDeviceStateRemove
+        // 选择设备被移除了，尝试选择其他设备
+        if (speaker?.deviceId === deviceId) {
+          select = true;
+        }
+      } else if (deviceState === 0) { // TRTCDeviceState.TRTCDeviceStateAdd
+        // 如果之前没有设备，此时添加了设备，则重新选择
+        if (!speaker?.deviceId || speaker.deviceId === '') {
+          select = true;
+        }
+        // 显示通知
+        const { notification } = await import('antd');
+        notification.info({
+          message: '通知',
+          description: '您有新的扬声器可以使用！'
+        });
+      }
+
+      if (speakerList.length > 0 && select) {
+        // 重新选择设备后需要重新打开采集摄像头
+        dispatch(setDevice({
+          name: 'speaker',
+          device: {
+            deviceId: speakerList[0]?.deviceId || ''
+          }
+        }));
+      }
+    }
+
+    // 记录日志
+    dispatch(setLog({
+      action: LIVE_ACTIONS.DeviceChange,
+      logParams: {
+        type: result?.data?.type,
+        deviceId: result?.data?.deviceId,
+        state: result?.data?.state,
+        changeMsg: typeObj[result?.data?.type] + '-' + stateObj[result?.data?.state] + '-' + result?.data?.deviceId
+      }
+    }));
+
+    return result;
   }
 );
 

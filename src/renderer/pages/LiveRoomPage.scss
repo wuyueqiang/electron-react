@@ -1,1 +1,255 @@
+@import '~antd/dist/antd.css';
+.ant-btn-primary {
+  border-color: #2baf6a;
+  background: #2baf6a;
+}
+.ant-btn-primary:hover,
+.ant-btn-primary:focus,
+.ant-btn-primary:active {
+  border-color: #2baf6a;
+  background: #2baf6a;
+}
+.laoding-box {
+  position: fixed;
+  z-index: 10000;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(256, 256, 256, 0.8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  p {
+    color: #5ac98f;
+  }
+}
+.room-wrap {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 1;
+  .roomRow {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    left: 0;
+    top: 0;
+    padding: 20px 30px;
+    box-sizing: border-box;
+    z-index: -1;
+    .roomMain {
+      width: 100%;
+      height: calc(100% - 65px);
+      display: flex;
+      justify-content: space-around;
+      .roomLeft {
+        position: relative;
+        height: 100%;
+        min-width: 0;
+        // max-width: 1300px;
+        flex: 1;
+        //padding-right: 20px;
+      }
+      .roomRight {
+        width: 360px;
+        height: 100%;
+        // padding: 20px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        background: rgba(255, 255, 255, 1);
+        box-shadow: 0px 2px 30px 0px rgba(30, 33, 36, 0.08);
+        border-radius: 20px;
+        position: relative;
+        z-index: 1002;
+        overflow: hidden;
+        .room-camera-wrap {
+          width: 100%;
+          min-height: 180px;
+          border-radius: 14px;
+          background: #666666;
+          overflow: hidden;
+          position: relative;
+          #room-camera-view-old {
+            width: 100%;
+            height: 100%;
+          }
+          .room-camera-view-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+            z-index: 3;
+          }
+          .room-camera-fullScreen-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+            z-index: 1;
+          }
+          .open-camera {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 12px;
+            opacity: 0.6;
+            background: #000000;
+            font-size: 14px;
+            color: #ffffff;
+            padding: 2px 12px;
+            border: 0;
+            text-align: center;
+            outline: none;
+            cursor: pointer;
+          }
+          .cancelFullScreen-tip {
+            text-align: center;
+            height: 15px;
+            font-size: 11px;
+            font-family: PingFangTC-Regular, PingFangTC;
+            font-weight: 400;
+            color: #bbbbbb;
+            line-height: 15px;
+            width: 100%;
+            position: absolute;
+            left: 0;
+            top: 30%;
+          }
+          .cancelFullScreen-btn {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 113px;
+            height: 33px;
+            border-radius: 9px;
+            border: 1px solid #2baf6a;
+            color: #2baf6a;
+            background-color: #f6f6f6;
+            cursor: pointer;
+            outline: none;
+          }
+          .room-camera-control-top,
+          .room-camera-control-bottom {
+            width: 100%;
+            height: 48px;
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            background: linear-gradient(
+              180deg,
+              rgba(3, 3, 3, 0) 0%,
+              rgba(3, 3, 3, 0.8) 100%
+            );
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 2;
+            .camera-control {
+              // margin-right: 24px;
+              display: flex;
+              justify-content: flex-start;
+              .mirrorleft,
+              .mirrorright {
+                font-size: 25px;
+                margin-right: 10px;
+              }
+              .fullScreen,
+              .cancelFullScreen {
+                font-size: 25px;
+                margin-right: 10px;
+              }
+            }
+            .camera-res {
+              border-radius: 12px;
+              opacity: 0.6;
+              background: #000000;
+              font-size: 14px;
+              color: #ffffff;
+              padding: 2px 12px;
+              border: 0;
+              text-align: center;
+              margin-left: 10px;
+              outline: none;
+              cursor: pointer;
+            }
+            .camera-hide {
+              margin-right: 10px;
+            }
+            .active-position {
+              display: flex;
+              align-items: center;
+              .active-label {
+                margin-left: 8px;
+              }
+            }
+          }
 
+          .room-camera-control-top {
+            top: 0;
+            background: linear-gradient(
+              180deg,
+              rgba(3, 3, 3, 0.8) 0%,
+              rgba(3, 3, 3, 0) 100%
+            );
+          }
+        }
+      }
+    }
+    .roomCtrl {
+      height: 65px;
+      width: 100%;
+      box-sizing: border-box;
+      padding-top: 15px;
+    }
+  }
+}
+.camera-res-pop {
+  .ant-popover-inner-content {
+    padding: 2px 6px;
+    .room-resolutions-list {
+      .ant-btn {
+        display: block;
+      }
+      .position-box {
+        display: flex;
+        align-items: center;
+        .active {
+          color: #2baf6a;
+        }
+        .desc {
+          color: #bababa;
+          margin-left: 5px;
+        }
+      }
+    }
+  }
+}
+.network-pop {
+  .ant-popover-inner-content {
+    padding: 2px 6px;
+    .newwork {
+      .q-item {
+        display: flex;
+        justify-content: space-between;
+        color: #ffffff;
+        font-size: 12px;
+        line-height: 24px;
+        p {
+          margin: 0;
+        }
+      }
+    }
+  }
+  .ant-popover-arrow {
+    display: none;
+  }
+}

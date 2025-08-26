@@ -22,7 +22,8 @@ import {
 import os from 'os';
 // import { execSync } from 'child_process'
 import { VERSION } from '../config/index';
-import { Modal, message, notification } from 'antd';
+import { Modal, message, notification, Button } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
 import YSElectronLive from '../plugins/live';
 import './LiveRoomPage.scss';
 import {
@@ -58,6 +59,8 @@ import { LStorage } from '../utils/tools';
 import { enterLiveRoom, TeacherQuitRoom, SaveTeacherAvDevice } from '../api';
 import { startBoardPushAction } from '../reducers/roomConfigThunks';
 import Test from '../components/Test';
+import Board from '../components/Board';
+import { handleDeviceChange } from '../utils/deviceChangeHandler';
 
 // @ts-ignore
 let ysLiveClient: any = null;
@@ -72,6 +75,8 @@ function LiveRoomPage() {
   const isStartRef: any = useRef(false);
   const cameraPositionRef: any = useRef(CameraPositions[1]);
   const [currentBeautyStyle, setCurrentBeautyStyle] = useState(BeautyStyles[0]);
+  const [isShowOutModal, setIsShowOutModal] = useState(false);
+  const [showLoadingVisibility, setShowLoadingVisibility] = useState(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -110,34 +115,59 @@ function LiveRoomPage() {
   // 监听TIM 加入群组结果
   function onTimJoinGroup(result: any) {
     // im登陆成功
-    if(result?.data?.code == 0) {
-        //设置im正常
-        dispatch(setValue({ key: 'imIsLogin', value: true }))
+    if (result?.data?.code == 0) {
+      //设置im正常
+      dispatch(setValue({ key: 'imIsLogin', value: true }));
     }
     // im组不存在或已被解散
-    if(result?.data?.code == 10010) {
-        // log(result, 'ERR')
+    if (result?.data?.code == 10010) {
+      // log(result, 'ERR')
     }
     // dispatch(setLog(LIVE_ACTIONS.TimJoinGroup, {
     //     joinCode: result?.data?.code,
     //     joinStatus: result?.data?.data?.status,
     //     joinEventCode: result?.eventCode
     // }))
-}
+  }
+  // 监听外接设备的插拔
+  function onDeviceChange(result: any) {
+    console.log('onDeviceChange-------------', result);
+
+    // 使用工具函数处理设备变更
+    handleDeviceChange(result, ysLiveClient, dispatch);
+  }
+
+  // 监听其他讲师进入直播间消息
+  function onMessageReceived(item: { data: any; eventCode: string }) {
+    let data = item.data;
+    if (data.type == 'liveSystemNotice' && data.action == 'anchorEnterRoom') {
+      setIsShowOutModal(true);
+      setTimeout(() => {
+        quitApp();
+      }, 2000);
+    }
+  }
+
+  function quitApp() {
+    window.electron?.ipcRenderer.sendMessage('exit');
+  }
 
   // 订阅回调
   function bindEvent() {
     ysLiveClient.on(ysLiveClient.EVENT.ERROR, onError);
     ysLiveClient.on(ysLiveClient.EVENT.START_LIVE_PUSH, onStartLivePush);
-    // ysLiveClient.on(ysLiveClient.EVENT.TRTC_DEVICE_CHANGE, onDeviceChange)
+    ysLiveClient.on(ysLiveClient.EVENT.TRTC_DEVICE_CHANGE, onDeviceChange);
     // // ysLiveClient.on(ysLiveClient.EVENT.TRTC_SCREEN_CAPTURE_COVERED, onScreenCaptureCovered)
     // ysLiveClient.on(ysLiveClient.EVENT.TRTC_SCREEN_CAPTURE_STARTED, onScreenCaptureStarted)
     // ysLiveClient.on(ysLiveClient.EVENT.TRTC_SCREEN_CAPTURE_STOPPED, onScreenCaptureStopped)
     // ysLiveClient.on(ysLiveClient.EVENT.TRTC_CONNECTION_LOST, onConnectionLost)
     // ysLiveClient.on(ysLiveClient.EVENT.TRTC_TRY_TO_RECONNECT, onTryToReconnect)
     // ysLiveClient.on(ysLiveClient.EVENT.TRTC_CONNECTION_RECOVERY, onConnectionRecovery)
-    ysLiveClient.on(ysLiveClient.EVENT.TIM_JOIN_GROUP, onTimJoinGroup)
-    // ysLiveClient.on(ysLiveClient.EVENT.TIM_TEACHER_ENTER_RECEIVED, onMessageReceived);
+    ysLiveClient.on(ysLiveClient.EVENT.TIM_JOIN_GROUP, onTimJoinGroup);
+    ysLiveClient.on(
+      ysLiveClient.EVENT.TIM_TEACHER_ENTER_RECEIVED,
+      onMessageReceived,
+    );
     // ysLiveClient.on(ysLiveClient.EVENT.LOTTERY_MSG_RECEIVED, onLotteryReceived);
   }
 
@@ -145,15 +175,18 @@ function LiveRoomPage() {
   function unBindEvent() {
     ysLiveClient.off(ysLiveClient.EVENT.ERROR, onError);
     ysLiveClient.off(ysLiveClient.EVENT.START_LIVE_PUSH, onStartLivePush);
-    // ysLiveClient.off(ysLiveClient.EVENT.TRTC_DEVICE_CHANGE, onDeviceChange)
-    ysLiveClient.off(ysLiveClient.EVENT.TIM_JOIN_GROUP, onTimJoinGroup)
+    ysLiveClient.off(ysLiveClient.EVENT.TRTC_DEVICE_CHANGE, onDeviceChange);
+    ysLiveClient.off(ysLiveClient.EVENT.TIM_JOIN_GROUP, onTimJoinGroup);
     // // ysLiveClient.off(ysLiveClient.EVENT.TRTC_SCREEN_CAPTURE_COVERED, onScreenCaptureCovered)
     // ysLiveClient.off(ysLiveClient.EVENT.TRTC_SCREEN_CAPTURE_STARTED, onScreenCaptureStarted)
     // ysLiveClient.off(ysLiveClient.EVENT.TRTC_SCREEN_CAPTURE_STOPPED, onScreenCaptureStopped)
     // ysLiveClient.off(ysLiveClient.EVENT.TRTC_CONNECTION_LOST, onConnectionLost)
     // ysLiveClient.off(ysLiveClient.EVENT.TRTC_TRY_TO_RECONNECT, onTryToReconnect)
     // ysLiveClient.off(ysLiveClient.EVENT.TRTC_CONNECTION_RECOVERY, onConnectionRecovery)
-    // ysLiveClient.off(ysLiveClient.EVENT.TIM_TEACHER_ENTER_RECEIVED, onMessageReceived);
+    ysLiveClient.off(
+      ysLiveClient.EVENT.TIM_TEACHER_ENTER_RECEIVED,
+      onMessageReceived,
+    );
     // ysLiveClient.off(ysLiveClient.EVENT.LOTTERY_MSG_RECEIVED, onLotteryReceived);
   }
 
@@ -163,7 +196,7 @@ function LiveRoomPage() {
     const cameraListData = ysLiveClient.getCameraList();
     const speakerListData = ysLiveClient.getSpeakerList();
     console.log('===speakerListData', speakerListData);
-    
+
     const micListData = ysLiveClient.getMicList();
     dispatch(setList({ name: 'camera', list: cameraListData }));
     dispatch(setList({ name: 'speaker', list: speakerListData }));
@@ -181,7 +214,7 @@ function LiveRoomPage() {
     let curSpeakerVolume: number = ysLiveClient.getAudioPlayoutVolume();
     console.log('===curSpeaker', curSpeaker);
     console.log('===curSpeakerVolume', curSpeakerVolume);
-    
+
     dispatch(
       setDevice({
         name: 'speaker',
@@ -189,7 +222,7 @@ function LiveRoomPage() {
           deviceId: curSpeaker.deviceId,
           volume: curSpeakerVolume,
           deviceName: curSpeaker.deviceName,
-          isOpen: true
+          isOpen: true,
         },
       }),
     );
@@ -201,7 +234,7 @@ function LiveRoomPage() {
           deviceId: curMic.deviceId,
           volume: 0,
           deviceName: curMic.deviceName,
-          isOpen: true
+          isOpen: true,
         },
       }),
     );
@@ -256,7 +289,7 @@ function LiveRoomPage() {
   // 离开直播间
   function exitRoom(type: string | undefined) {
     if (!isStart) {
-      // setShowLoadingVisibility(true);
+      setShowLoadingVisibility(true);
       // dispatch(setLog(LIVE_ACTIONS.anchorExitRoom));
       ysLiveClient.exitRoom();
       if (!roomInfo.room_id) {
@@ -324,16 +357,12 @@ function LiveRoomPage() {
     }
     let cameraView = document.getElementById('room-camera-view');
 
-    // const { type, sourceId, sourceName, rect } = getCaptur()
-
     ysLiveClient.startLivePush({
       cameraView,
     });
 
     // 设置摄像头画面质量
     changeCameraStreamEncoder(currentCameraStreamEncoder);
-    // 设置分享画面质量
-    // changeBoardStreamEncoder(currentBoardStreamEncoder)
 
     dispatch(setValue({ key: 'isStart', value: true }));
     dispatch(setValue({ key: 'isOpenCamera', value: true }));
@@ -342,7 +371,6 @@ function LiveRoomPage() {
     testLive = is_test;
 
     uploadTeacherAvDevice(true);
-    // setValue('cameraPosition', CameraPositions[1]);
     dispatch(
       setDevice({
         name: 'mic',
@@ -351,7 +379,6 @@ function LiveRoomPage() {
         },
       }),
     );
-
 
     window.electron?.ipcRenderer.sendMessage('startLivePush');
 
@@ -542,16 +569,101 @@ function LiveRoomPage() {
 
   return (
     <div>
+      {showLoadingVisibility ? (
+        <div className="laoding-box">
+          <p>
+            <LoadingOutlined style={{ fontSize: '30px', color: '#5AC98F' }} />
+          </p>
+          <p>退出中...</p>
+        </div>
+      ) : null}
+      <Modal
+        title="提示"
+        open={isShowOutModal}
+        onOk={() => quitApp()}
+        onCancel={() => quitApp()}
+        footer={[
+          <Button type="primary" onClick={() => quitApp()}>
+            确定
+          </Button>,
+        ]}
+      >
+        <p>房间号{roomId}有其他老师进入，导致您被退出</p>
+      </Modal>
+
       {/* 检测弹窗 */}
-      {testVisibility ? <Test ysLiveClient={ysLiveClient} dispatch={dispatch} roomConfig={roomConfig} setMirror={setMirror}></Test> : null}
+      {testVisibility ? (
+        <Test
+          ysLiveClient={ysLiveClient}
+          dispatch={dispatch}
+          roomConfig={roomConfig}
+          setMirror={setMirror}
+        ></Test>
+      ) : null}
+
+      <div className="room-wrap" id="room-wrap">
+        <div className="roomRow">
+          <div className="roomMain">
+            <div className="roomLeft">
+              {ysLiveClient ? (
+                <Board
+                  setCameraPosition={setCameraPosition}
+                  ysLiveClient={ysLiveClient}
+                  dispatch={dispatch}
+                  startLivePush={startLivePush}
+                  roomConfig={roomConfig}
+                  liveStage={liveStage}
+                ></Board>
+              ) : null}
+            </div>
+            {/* <div className="roomRight">
+              {ysLiveClient ? (
+                <Chat
+                  dispatch={dispatch}
+                  ysLiveClient={ysLiveClient}
+                  roomConfig={roomConfig}
+                ></Chat>
+              ) : null}
+            </div> */}
+          </div>
+          <div className="roomCtrl">
+            {/* <ControlBar
+              ysLiveClient={ysLiveClient}
+              dispatch={dispatch}
+              roomConfig={roomConfig}
+              muteLocalVideo={muteLocalVideo}
+              stopLivePush={stopLivePush}
+              exitRoom={exitRoom}
+              setShowVideoSetting={setShowVideoSetting}
+            ></ControlBar> */}
+          </div>
+        </div>
+        {/* {ysLiveClient ? (
+          <Pendant
+            ysLiveClient={ysLiveClient}
+            dispatch={dispatch}
+            roomConfig={roomConfig}
+            lotteryTask={lotteryTask}
+          ></Pendant>
+        ) : null} */}
+      </div>
 
       <button className="back-btn" onClick={() => navigate('/login')}>
         back
       </button>
       <h1>LiveRoomPage</h1>
       <button onClick={() => startLivePush(false)}>startLivePush</button>
-      <div id='room-camera-view' style={{width: '100px', height: '100px'}}></div>
-      <button onClick={() => dispatch(setValue({ key: 'testVisibility', value: true }))}>testVisibility</button>
+      <div
+        id="room-camera-view"
+        style={{ width: '100px', height: '100px' }}
+      ></div>
+      <button
+        onClick={() =>
+          dispatch(setValue({ key: 'testVisibility', value: true }))
+        }
+      >
+        testVisibility
+      </button>
     </div>
   );
 }
