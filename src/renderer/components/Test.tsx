@@ -6,7 +6,6 @@ import './test.scss';
 import pkg from '../../../package.json';
 var os = require('os');
 // import { execSync } from 'child_process';
-import publicIp from 'public-ip';
 import { LStorage } from '../utils/tools';
 import { useSelector } from 'react-redux';
 import { selectSpeaker, selectImIsLogin, selectRoomConfig } from '../reducers/index';
@@ -70,7 +69,6 @@ export default function Test(props: TestPropsParam) {
     version: '',
   });
   const [assetPath, setAssetPath] = useState('');
-  const [ip, setIp] = useState('');
   const [precentCPU, setPrecentCPU] = useState<number | null>(null);
   const [isCPUPass, setIsCPUPass] = useState(false);
   const [isOnLine, setIsOnLine] = useState(false);
@@ -215,8 +213,7 @@ export default function Test(props: TestPropsParam) {
     setOsVersion({
       name: '',
       version: '',
-    });
-    setIp('');
+    })
     setQuality('');
     setPrecentCPU(null);
 
@@ -348,12 +345,6 @@ export default function Test(props: TestPropsParam) {
     ) : null;
   }
 
-  // 获取网络IP
-  async function getIp() {
-    let ip = (await publicIp.v4()) || '未知';
-    setIp(ip);
-  }
-
   // 获取 CPU 使用率
   function getCPUUsage() {
     const cpus = os.cpus();
@@ -433,9 +424,6 @@ export default function Test(props: TestPropsParam) {
         setOsVersion(res);
       });
       window.electron.ipcRenderer.sendMessage('getOsVersion');
-      setTimeout(() => {
-        getIp().then();
-      }, 2000);
     } else if (step == 5) {
       ysLiveClient.stopMicTest();
     } else {
@@ -700,17 +688,6 @@ export default function Test(props: TestPropsParam) {
                 )}
               </li>
               <li>
-                <p>网络IP</p>
-                {/*{isTestSpeedIng ? <LoadingOutlined /> : <p>{ip}</p>}*/}
-                {isTestSpeedIng || !ip ? (
-                  <p>
-                    <LoadingOutlined />
-                  </p>
-                ) : (
-                  <p>{ip}</p>                  
-                )}
-              </li>
-              <li>
                 <p>网络质量</p>
                 {/*{isTestSpeedIng ? <LoadingOutlined /> : <p>{quality}</p>}*/}
                 {!isTestSpeedIng || quality ? (
@@ -774,7 +751,6 @@ export default function Test(props: TestPropsParam) {
               <div className="top-left">
                 <p>操作系统</p>
                 <p>客户端版本</p>
-                <p>网络IP</p>
               </div>
               <div className="top-right">
                 <p>
@@ -785,7 +761,6 @@ export default function Test(props: TestPropsParam) {
                   {pkg.version}
                   {npm_env == 'prod' ? null : npm_env}
                 </p>
-                <p>{ip}</p>
               </div>
             </div>
             <div className="step5-bottom">

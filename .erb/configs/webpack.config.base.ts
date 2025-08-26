@@ -96,10 +96,7 @@ const configuration: webpack.Configuration = {
   },
 
   plugins: [
-    new webpack.EnvironmentPlugin({ 
-      NODE_ENV: 'production',
-      WEB_ENV: process.env.WEB_ENV || 'prod'
-    }),
+    new webpack.EnvironmentPlugin({ NODE_ENV: 'production'}),
     new NodePolyfillPlugin(),
     new NodeProtocolPlugin(),
     // 提供 process 对象

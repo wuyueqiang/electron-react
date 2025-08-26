@@ -213,6 +213,8 @@ function LiveRoomPage() {
         name: 'camera',
         device: {
           deviceId: ysLiveClient.getCameraList()[0]?.deviceId || '',
+          deviceName: ysLiveClient.getCameraList()[0]?.deviceName || '',
+          isOpen: true,
         },
       }),
     );
