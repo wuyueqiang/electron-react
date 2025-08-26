@@ -9,8 +9,9 @@ var os = require('os');
 import publicIp from 'public-ip';
 import { LStorage } from '../utils/tools';
 import { useSelector } from 'react-redux';
-import { selectSpeaker, selectImIsLogin } from '../reducers/index';
+import { selectSpeaker, selectImIsLogin, selectRoomConfig } from '../reducers/index';
 import ImgIcon from '../components/ImgIcon';
+import { useDispatch } from 'react-redux';
 
 import {
   setDevice,
@@ -31,8 +32,6 @@ import {
 
 interface TestPropsParam {
   ysLiveClient: any;
-  dispatch: any;
-  roomConfig: any;
   setMirror: any;
 }
 
@@ -48,18 +47,20 @@ enum QUALITY_MAP {
 }
 
 export default function Test(props: TestPropsParam) {
-  const { ysLiveClient, dispatch, roomConfig, setMirror } = props;
+  const { ysLiveClient, setMirror } = props;
+  const dispatch = useDispatch();
+  const roomConfig = useSelector(selectRoomConfig);
   const {
     cameraList,
     speakerList,
     micList,
     camera,
-    // speaker,
+    speaker,
     mic,
     isMirror,
+    imIsLogin
   } = roomConfig;
-  const speaker = useSelector(selectSpeaker);
-  const imIsLogin = useSelector(selectImIsLogin);
+  // const imIsLogin = useSelector(selectImIsLogin);
 
   const [curMicVolume, setMicVolume] = useState(0);
   const [showBtn, setShowBtn] = useState(false);
@@ -443,6 +444,7 @@ export default function Test(props: TestPropsParam) {
   }, [step]);
 
   useEffect(() => {
+    console.log('===roomConfig', roomConfig);
     if (ysLiveClient) {
       setIsOnLine(navigator.onLine);
       bindEvent();

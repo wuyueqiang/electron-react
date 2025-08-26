@@ -119,6 +119,7 @@ function LiveRoomPage() {
 
   // 监听TIM 加入群组结果
   function onTimJoinGroup(result: any) {
+    console.log('====onTimJoinGroup', result);
     // im登陆成功
     if (result?.data?.code == 0) {
       //设置im正常
@@ -641,8 +642,6 @@ function LiveRoomPage() {
       {testVisibility ? (
         <Test
           ysLiveClient={ysLiveClient}
-          dispatch={dispatch}
-          roomConfig={roomConfig}
           setMirror={setMirror}
         ></Test>
       ) : null}
@@ -655,10 +654,7 @@ function LiveRoomPage() {
                 <Board
                   setCameraPosition={setCameraPosition}
                   ysLiveClient={ysLiveClient}
-                  dispatch={dispatch}
                   startLivePush={startLivePush}
-                  roomConfig={roomConfig}
-                  liveStage={liveStage}
                 ></Board>
               ) : null}
             </div>

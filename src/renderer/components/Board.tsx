@@ -5,13 +5,13 @@ import './Board.scss';
 
 import { TRTCVideoStreamType } from 'trtc-electron-sdk/liteav/trtc_define';
 import ImgIcon from './ImgIcon';
+import { useSelector } from 'react-redux';
+import { selectRoomConfig } from '../reducers/index';
+import { useDispatch } from 'react-redux';
 
 interface NewBoardParam {
     ysLiveClient: any;
-    dispatch: any;
     startLivePush: any;
-    roomConfig: any;
-    liveStage: any;
     setCameraPosition: any;
 }
 
@@ -23,8 +23,10 @@ let videoLoop: boolean = true; // 视频课件是否循环播放
 let t1: any = 0; // 初始时间
 
 export default function Board(props: NewBoardParam) {
-    const { ysLiveClient, dispatch, startLivePush, roomConfig, liveStage, setCameraPosition } = props;
-    const { isStart, isTestLive, isShareScreen, boardFileList, fileVisibility, isTested, roomInfo, isOpenCamera, cameraPosition, isOpenMic, videoCallUserList, liveBGM } = roomConfig;
+    const { ysLiveClient, startLivePush, setCameraPosition } = props;
+    const roomConfig = useSelector(selectRoomConfig);
+    const { isStart, isTestLive, isShareScreen, boardFileList, fileVisibility, isTested, roomInfo, isOpenCamera, cameraPosition, isOpenMic, videoCallUserList, liveBGM, liveStage } = roomConfig;
+    const dispatch = useDispatch();
     const EVENT = ysLiveClient?.EVENT || {};
     const [currentPage, setCurrentPage] = useState(1); // 当前课件页码
     const [currentAllPages, setCurrentAllPages] = useState(1); // 当前课件所有页数
