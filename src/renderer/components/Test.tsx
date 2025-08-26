@@ -9,7 +9,7 @@ var os = require('os');
 import publicIp from 'public-ip';
 import { LStorage } from '../utils/tools';
 import { useSelector } from 'react-redux';
-import { selectSpeaker } from '../reducers/index';
+import { selectSpeaker, selectImIsLogin } from '../reducers/index';
 import ImgIcon from '../components/ImgIcon';
 
 import {
@@ -18,8 +18,9 @@ import {
   setValue,
   setOperateLog,
 } from '../reducers/roomConfigSlice';
+import { setDeviceThunk } from '../reducers/roomConfigThunks';
 
-import { RESOURCE_PATH, npm_env } from '../config';
+import { npm_env } from '../config';
 import {
   LIVE_ACTIONS,
   StatisticsWarn,
@@ -55,12 +56,10 @@ export default function Test(props: TestPropsParam) {
     camera,
     // speaker,
     mic,
-    imIsLogin,
     isMirror,
   } = roomConfig;
   const speaker = useSelector(selectSpeaker);
-
-console.log('===speaker', speaker);
+  const imIsLogin = useSelector(selectImIsLogin);
 
   const [curMicVolume, setMicVolume] = useState(0);
   const [showBtn, setShowBtn] = useState(false);
@@ -69,8 +68,9 @@ console.log('===speaker', speaker);
     name: '',
     version: '',
   });
+  const [assetPath, setAssetPath] = useState('');
   const [ip, setIp] = useState('');
-  const [precentCPU, setPrecentCPU] = useState(0);
+  const [precentCPU, setPrecentCPU] = useState<number | null>(null);
   const [isCPUPass, setIsCPUPass] = useState(false);
   const [isOnLine, setIsOnLine] = useState(false);
   const testSpeedIng: any = useRef(false);
@@ -106,18 +106,17 @@ console.log('===speaker', speaker);
 
   // 选择摄像头
   function setCamera(deviceId: string) {
-    dispatch(setDevice({ name: 'camera', device: { deviceId } }));
+    dispatch(setDeviceThunk({ name: 'camera', info: { deviceId } }));
   }
 
   // 设置要使用的扬声器
   function setSpeaker(deviceId: string) {
-    dispatch(setDevice({ name: 'speaker', device: { deviceId } }));
+    dispatch(setDeviceThunk({ name: 'speaker', info: { deviceId } }));
   }
 
   // 开始扬声器测试
   function startSpeakerTest() {
-    console.log(RESOURCE_PATH + '/test.mp3')
-    ysLiveClient.startSpeakerDeviceTest(RESOURCE_PATH + '/test.mp3');
+    ysLiveClient.startSpeakerTest(assetPath);
   }
 
   // 监听扬声器测试结果
@@ -126,7 +125,7 @@ console.log('===speaker', speaker);
   }
 
   function changeSpeakerVolume(volume: any) {
-    dispatch(setDevice({ name: 'speaker', device: { volume } }));
+    dispatch(setDeviceThunk({ name: 'speaker', info: { volume } }));
   }
 
   // 停止扬声器测试
@@ -139,7 +138,7 @@ console.log('===speaker', speaker);
 
   // 设置要使用的麦克风
   function setMic(deviceId: string) {
-    dispatch(setDevice({ name: 'mic', device: { deviceId } }));
+    dispatch(setDeviceThunk({ name: 'mic', info: { deviceId } }));
   }
 
   // 开始麦克风测试
@@ -218,7 +217,7 @@ console.log('===speaker', speaker);
     });
     setIp('');
     setQuality('');
-    setPrecentCPU(0);
+    setPrecentCPU(null);
 
     setStep(1);
   }
@@ -359,7 +358,10 @@ console.log('===speaker', speaker);
     const cpus = os.cpus();
     const totalCPU = cpus.reduce(
       (acc: any, cpu: any) => {
-        const total = Object.values(cpu.times).reduce((a: any, b: any) => a + b, 0);
+        const total = Object.values(cpu.times).reduce(
+          (a: any, b: any) => a + b,
+          0,
+        );
         const idle = cpu.times.idle;
         return {
           total: acc.total + total,
@@ -378,24 +380,16 @@ console.log('===speaker', speaker);
 
   // 获取CPU使用状态
   function startCPUTest() {
-    // 获取多次cpu，取最大
-    let arr: any = [];
-    let timer: any = setInterval(() => {
-      //   arr.push(process.getCPUUsage().percentCPUUsage.toFixed(0));
-      //获取当前cpu使用率
-      const cpuUsage = getCPUUsage();
-      console.log('cpuUsage', cpuUsage);
-      arr.push(cpuUsage);
-    }, 300);
-    setTimeout(() => {
-      // 结束计时器，取最大CPU
-      clearInterval(timer);
-      setPrecentCPU(Math.max(...arr));
-      // 小与80通过检测
-      if (Math.max(...arr) < StatisticsWarn.systemCpu) {
+    window.electron.ipcRenderer.once('getCPUUsage', (res: any) => {
+      console.log('====getCPUUsage111', res);
+      setPrecentCPU(res);
+      if (res < StatisticsWarn.systemCpu) {
         setIsCPUPass(true);
+      } else {
+        setIsCPUPass(false);
       }
-    }, 2000);
+    });
+    window.electron.ipcRenderer.sendMessage('getCPUUsage');
   }
 
   function onMirrorChange(e: any) {
@@ -403,6 +397,11 @@ console.log('===speaker', speaker);
   }
 
   useEffect(() => {
+    window.electron.ipcRenderer.once('getAssetPath', (res: any) => {
+      console.log('====getAssetPath', res);
+      setAssetPath(res);
+    });
+    window.electron.ipcRenderer.sendMessage('getAssetPath', 'test.mp3');
     if (step == 1) {
       // 网络测速慢，提前开始测速
       setIsTestSpeedIng(true);
@@ -428,47 +427,13 @@ console.log('===speaker', speaker);
         setShowBtn(true);
       }, 1500);
     } else if (step == 4) {
-      // setIsTestSpeedIng(true)
-      // testSpeedIng.current = true
-      // startSpeedTest()
       startCPUTest();
-
+      window.electron.ipcRenderer.once('getOsVersion', (res: any) => {
+        setOsVersion(res);
+      });
+      window.electron.ipcRenderer.sendMessage('getOsVersion');
       setTimeout(() => {
-        // @ts-ignore
-        let label = {
-          name: '',
-          version: '',
-        };
-        let osType = os.type();
-        switch (osType) {
-          case 'Darwin':
-            label = {
-              name: 'macOS ',
-              version: os.release(),
-              //   version: execSync('sw_vers -productVersion').toString().trim(),
-            };
-            break;
-          case 'Linux':
-            label = {
-              name: 'linux ',
-              version: '',
-            };
-            break;
-          case 'Windows_NT':
-            label = {
-              name: 'windows ',
-              version: process.getSystemVersion(),
-            };
-            break;
-          default:
-            label = {
-              name: '未知',
-              version: '',
-            };
-        }
-        setOsVersion(label);
         getIp().then();
-        // stopSpeedTest()
       }, 2000);
     } else if (step == 5) {
       ysLiveClient.stopMicTest();
@@ -605,8 +570,8 @@ console.log('===speaker', speaker);
         {step == 2 ? (
           <div className="test-step2">
             <div className="step-select">
-              <p className="step-label">选择扬声器{speaker.deviceId}</p>
-              
+              <p className="step-label">选择扬声器</p>
+
               <Select
                 value={speaker.deviceId}
                 onChange={setSpeaker}
@@ -735,12 +700,12 @@ console.log('===speaker', speaker);
               <li>
                 <p>网络IP</p>
                 {/*{isTestSpeedIng ? <LoadingOutlined /> : <p>{ip}</p>}*/}
-                {!isTestSpeedIng || ip ? (
-                  <p>{ip}</p>
-                ) : (
+                {isTestSpeedIng || !ip ? (
                   <p>
                     <LoadingOutlined />
                   </p>
+                ) : (
+                  <p>{ip}</p>                  
                 )}
               </li>
               <li>
@@ -768,17 +733,19 @@ console.log('===speaker', speaker);
 
               <li>
                 <p>系统CPU使用率</p>
-                {!isTestSpeedIng || precentCPU ? (
+                {isTestSpeedIng || precentCPU === null ? (
+                  <p>
+                    <LoadingOutlined />
+                  </p>
+                ) : (
                   <p
                     className={
-                      precentCPU >= StatisticsWarn.systemCpu ? 'warning' : ''
+                      precentCPU && precentCPU >= StatisticsWarn.systemCpu
+                        ? 'warning'
+                        : ''
                     }
                   >
                     {precentCPU}%
-                  </p>
-                ) : (
-                  <p>
-                    <LoadingOutlined />
                   </p>
                 )}
                 {precentCPU && precentCPU >= StatisticsWarn.systemCpu ? (

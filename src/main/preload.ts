@@ -4,7 +4,7 @@ import { ipcRenderer, IpcRendererEvent } from 'electron';
 // 在window上添加ipcRenderer
 // (window as any).electron.ipcRenderer = ipcRenderer
 
-export type Channels = 'ipc-example' | 'get-device-id' | 'uploadLog' | 'getLogUrl' | 'setLogger' | 'enterRoom' | 'app-close' | 'exit' | 'startLivePush';
+export type Channels = 'ipc-example' | 'get-device-id' | 'uploadLog' | 'getLogUrl' | 'setLogger' | 'enterRoom' | 'app-close' | 'exit' | 'startLivePush' | 'getAssetPath' | 'getOsVersion' | 'getCPUUsage';
 
 const electronHandler = {
   ipcRenderer: {

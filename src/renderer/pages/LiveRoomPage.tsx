@@ -107,6 +107,24 @@ function LiveRoomPage() {
     console.log('onStartLivePush', result);
   }
 
+  // 监听TIM 加入群组结果
+  function onTimJoinGroup(result: any) {
+    // im登陆成功
+    if(result?.data?.code == 0) {
+        //设置im正常
+        dispatch(setValue({ key: 'imIsLogin', value: true }))
+    }
+    // im组不存在或已被解散
+    if(result?.data?.code == 10010) {
+        // log(result, 'ERR')
+    }
+    // dispatch(setLog(LIVE_ACTIONS.TimJoinGroup, {
+    //     joinCode: result?.data?.code,
+    //     joinStatus: result?.data?.data?.status,
+    //     joinEventCode: result?.eventCode
+    // }))
+}
+
   // 订阅回调
   function bindEvent() {
     ysLiveClient.on(ysLiveClient.EVENT.ERROR, onError);
@@ -118,7 +136,7 @@ function LiveRoomPage() {
     // ysLiveClient.on(ysLiveClient.EVENT.TRTC_CONNECTION_LOST, onConnectionLost)
     // ysLiveClient.on(ysLiveClient.EVENT.TRTC_TRY_TO_RECONNECT, onTryToReconnect)
     // ysLiveClient.on(ysLiveClient.EVENT.TRTC_CONNECTION_RECOVERY, onConnectionRecovery)
-    // ysLiveClient.on(ysLiveClient.EVENT.TIM_JOIN_GROUP, onTimJoinGroup)
+    ysLiveClient.on(ysLiveClient.EVENT.TIM_JOIN_GROUP, onTimJoinGroup)
     // ysLiveClient.on(ysLiveClient.EVENT.TIM_TEACHER_ENTER_RECEIVED, onMessageReceived);
     // ysLiveClient.on(ysLiveClient.EVENT.LOTTERY_MSG_RECEIVED, onLotteryReceived);
   }
@@ -128,7 +146,7 @@ function LiveRoomPage() {
     ysLiveClient.off(ysLiveClient.EVENT.ERROR, onError);
     ysLiveClient.off(ysLiveClient.EVENT.START_LIVE_PUSH, onStartLivePush);
     // ysLiveClient.off(ysLiveClient.EVENT.TRTC_DEVICE_CHANGE, onDeviceChange)
-    // ysLiveClient.off(ysLiveClient.EVENT.TIM_JOIN_GROUP, onTimJoinGroup)
+    ysLiveClient.off(ysLiveClient.EVENT.TIM_JOIN_GROUP, onTimJoinGroup)
     // // ysLiveClient.off(ysLiveClient.EVENT.TRTC_SCREEN_CAPTURE_COVERED, onScreenCaptureCovered)
     // ysLiveClient.off(ysLiveClient.EVENT.TRTC_SCREEN_CAPTURE_STARTED, onScreenCaptureStarted)
     // ysLiveClient.off(ysLiveClient.EVENT.TRTC_SCREEN_CAPTURE_STOPPED, onScreenCaptureStopped)

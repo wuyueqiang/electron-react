@@ -16,6 +16,8 @@ import { machineIdSync } from 'node-machine-id';
 import { randomUUID } from 'crypto';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
+import os from 'os';
+import { execSync } from 'child_process';
 
 class AppUpdater {
   constructor() {
@@ -60,6 +62,146 @@ ipcMain.on('setLogger', (event, arg) => {
   logger.info(JSON.stringify(arg));
 });
 
+ipcMain.on('getCPUUsage', (event, arg) => {
+  console.log('====getCPUUsage');
+  let arr: any = [];
+  let timer: any = setInterval(() => {
+    //获取当前cpu使用率
+    const cpuUsage = getCPUUsage();
+    console.log('cpuUsage', cpuUsage);
+    arr.push(cpuUsage);
+  }, 300);
+  setTimeout(() => {
+    // 结束计时器，取最大CPU
+    clearInterval(timer);
+    let maxCPU = Math.max(...arr);
+    console.log('maxCPU', maxCPU);
+    event.reply('getCPUUsage', maxCPU);
+  }, 2000);
+});
+
+ipcMain.on('getAssetPath', (event, arg) => {
+  console.log('====getAssetPath', arg);
+  event.reply('getAssetPath', getAssetPath(arg));
+});
+
+ipcMain.on('getOsVersion', (event, arg) => {
+  console.log('====getOsVersion');
+  let label = {
+    name: '',
+    version: '',
+  };
+  let osType = os.type();
+  switch (osType) {
+    case 'Darwin':
+      label = {
+        name: 'macOS ',
+        version: execSync('sw_vers -productVersion').toString().trim(),
+      };
+      break;
+    case 'Linux':
+      label = {
+        name: 'linux ',
+        version: '',
+      };
+      break;
+    case 'Windows_NT':
+      label = {
+        name: 'windows ',
+        version: getWindowsVersion(),
+      };
+      break;
+    default:
+      label = {
+        name: '未知',
+        version: '',
+      };
+  }
+  event.reply('getOsVersion', label);
+});
+
+// 获取 Windows 版本号的函数
+const getWindowsVersion = (): string => {
+  const release = os.release(); // 格式: '10.0.22621'
+  const parts = release.split('.');
+  const majorVersion = parseInt(parts[0], 10);
+  const minorVersion = parseInt(parts[1], 10);
+
+  // Windows 版本映射
+  if (majorVersion === 10) {
+    return '10';
+  } else if (majorVersion === 6) {
+    if (minorVersion === 3) {
+      return '8.1';
+    } else if (minorVersion === 2) {
+      return '8';
+    } else if (minorVersion === 1) {
+      return '7';
+    } else if (minorVersion === 0) {
+      return 'Vista';
+    }
+  } else if (majorVersion === 5) {
+    if (minorVersion === 2) {
+      return 'Server 2003';
+    } else if (minorVersion === 1) {
+      return 'XP';
+    } else if (minorVersion === 0) {
+      return '2000';
+    }
+  }
+
+  return release; // 如果无法识别，返回完整版本号
+};
+
+// 获取 CPU 使用率的简单方法
+const getCPUUsage = (): number => {
+  try {
+    const platform = os.platform();
+    console.log('====platform', platform, '111');
+    switch (platform) {
+      case 'win32':
+        return getWindowsCPUUsage();
+      case 'darwin':
+        return getMacCPUUsage();
+      default:
+        return 0;
+    }
+  } catch (error) {
+    console.error('获取 CPU 使用率失败:', error);
+    return 0;
+  }
+};
+
+// Windows 平台
+const getWindowsCPUUsage = (): number => {
+  try {
+    // 方法1: 使用 PowerShell 获取 CPU 使用率
+    const command = `powershell "Get-Counter '\\Processor(_Total)\\% Processor Time' | Select-Object -ExpandProperty CounterSamples | Select-Object -ExpandProperty CookedValue"`;
+    const result = execSync(command, { encoding: 'utf8' });
+    const usage = parseFloat(result.trim());
+    
+    if (!isNaN(usage)) {
+      console.log('====getWindowsCPUUsage PowerShell success:', usage);
+      return Math.round(usage);
+    }
+  } catch (error) {
+    console.log('====getWindowsCPUUsage PowerShell failed:', error.message);
+    return 0;
+  }
+  return 0;
+};
+
+// macOS 平台
+const getMacCPUUsage = (): number => {
+  try {
+    const command = `top -l 1 -n 0 | grep "CPU usage" | awk '{print $3}' | sed 's/%//'`;
+    const result = execSync(command, { encoding: 'utf8' });
+    return parseFloat(result.trim()) || 0;
+  } catch (error) {
+    return 0;
+  }
+};
+
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
@@ -85,18 +227,21 @@ const installExtensions = async () => {
     .catch(console.log);
 };
 
+const RESOURCES_PATH = app.isPackaged
+  ? path.join(
+      process.resourcesPath || path.dirname(app.getPath('exe')),
+      'assets',
+    )
+  : path.join(__dirname, '../../assets');
+
+const getAssetPath = (...paths: string[]): string => {
+  return path.join(RESOURCES_PATH, ...paths);
+};
+
 const createWindow = async () => {
   if (isDebug) {
     await installExtensions();
   }
-
-  const RESOURCES_PATH = app.isPackaged
-    ? path.join(process.resourcesPath || path.dirname(app.getPath('exe')), 'assets')
-    : path.join(__dirname, '../../assets');
-
-  const getAssetPath = (...paths: string[]): string => {
-    return path.join(RESOURCES_PATH, ...paths);
-  };
   mainWindow = new BrowserWindow({
     show: false,
     width: 1024,
