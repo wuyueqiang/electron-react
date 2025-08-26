@@ -27,24 +27,8 @@ import { LoadingOutlined } from '@ant-design/icons';
 import YSElectronLive from '../plugins/live';
 import './LiveRoomPage.scss';
 import {
-  selectIsStart,
-  selectIsTested,
   selectRoomConfig,
-  selectLiveStatus,
-  selectDeviceStatus,
-  selectVisibilityStatus,
   selectRouteParams,
-  selectCameraList,
-  selectMicList,
-  selectSpeakerList,
-  selectIsMirror,
-  selectTestVisibility,
-  selectLiveStage,
-  selectScreenList,
-  selectCameraPosition,
-  selectIsShareScreen,
-  selectIsOpenCamera,
-  selectIsOpenMic,
 } from '../reducers/index';
 import {
   setValue,
@@ -88,18 +72,7 @@ function LiveRoomPage() {
 
   // 使用Redux选择器获取状态
   const roomConfig = useSelector(selectRoomConfig);
-  const { roomInfo } = roomConfig;
-  const isStart = useSelector(selectIsStart);
-  const liveStage = useSelector(selectLiveStage);
-  const isTested = useSelector(selectIsTested);
-  const cameraList = useSelector(selectCameraList);
-  const micList = useSelector(selectMicList);
-  const speakerList = useSelector(selectSpeakerList);
-  const isMirror = useSelector(selectIsMirror);
-  const testVisibility = useSelector(selectTestVisibility);
-  const liveStatus = useSelector(selectLiveStatus);
-  const deviceStatus = useSelector(selectDeviceStatus);
-  const visibilityStatus = useSelector(selectVisibilityStatus);
+  const { roomInfo, isStart, cameraList, micList, speakerList, isMirror, isTested, testVisibility, visibilityStatus, liveStatus, cameraPosition, isOpenMic, deviceStatus, liveBGM, liveStage } = roomConfig;
   const routeParams = useSelector(selectRouteParams);
 
   const [availableCameraResolution, setAvailableCameraResolution] = useState(

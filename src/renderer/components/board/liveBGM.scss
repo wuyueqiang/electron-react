@@ -1,0 +1,111 @@
+.music-box {
+    p{
+        margin-bottom: 0;
+    }
+    box-sizing: border-box;
+    height: 50px;
+    width: 100%;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    background-color: #434652;
+
+    .btn-box, .contrl-btn {
+        width: 32px;
+        height: 32px;
+        margin-right: 16px;
+        .imgicon {
+            width: 32px;
+            height: 32px;
+        }
+    }
+    .time {
+        min-width: 40px;
+        color: #FFF;
+        font-family: PingFang SC;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 24px;
+        opacity: 0.8;
+        &.duration {
+            margin-right: 40px;
+        }
+    }
+    .progressBar {
+        flex: 1;
+        height: 6px;
+        border-radius: 3px;
+        background: rgba(256, 256, 256, 0.2);
+        margin: 0 19px;
+
+        .progress {
+            width: 0%;
+            height: 6px;
+            border-radius: 3px;
+            background: #2BAF6A;
+            position: relative;
+            pointer-events: none;
+            &::after{
+                display: block;
+                content: '';
+                width: 16px;
+                height: 16px;
+                border-radius: 8px;
+                background-color: #FFF;
+                position: absolute;
+                right: -8px;
+                top: -5px;
+            }
+        }
+    }
+    .line{
+        width: 1px;
+        height: 20px;
+        border-radius: 3px;
+        opacity: 0.5;
+        background: #FFF;
+        margin-left: 8px;
+        margin-right: 24px;
+    }
+    .music-title {
+        margin-right: 40px;
+        color: #FFF;
+        text-align: center;
+        font-family: PingFang SC;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
+    }
+    .music-quit-btn {
+        span {
+            margin: 0;
+            color: #FFF;
+            text-align: center;
+            font-family: PingFang SC;
+            font-size: 14px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: normal;
+        }
+        .musicQuit {
+            margin-top: -5px !important;
+        }
+    }
+}
+.music-box-nodata {
+    height: 50px;
+}
+.music-volume-slider {
+    .ant-slider-rail{
+        background: rgba(256, 256, 256, 0.2) !important;
+    }
+    .ant-slider-track {
+        background: #2BAF6A !important;
+    }
+    .ant-slider-handle {
+        border: solid 2px #2BAF6A !important;
+    }
+
+}

@@ -1,0 +1,96 @@
+.file-manager {
+    height: 100%;
+    .file-wrap {
+        height: 100%;
+        .refresh-btn {
+            display: block;
+            margin: 10px auto;
+        }
+        .file-upload {
+            margin: 20px 0;
+            display: block;
+            text-align: center;
+        }
+        .file-desc {
+            padding: 0  15px;
+            font-size: 14px;
+            p {
+                margin: 0;
+            }
+        }
+        .file-list-wrap {
+            height: 100%;
+            padding: 10px 20px 10px 0;
+            box-sizing: border-box;
+            position: relative;
+            .file-list-content {
+                height: 100%;
+                .ant-tabs {
+                    .ant-tabs-nav {
+                        margin: 0;
+                    }
+                }
+                .file-list {
+                    width: 100%;
+                    height: 260px;
+                    box-sizing: border-box;
+                    border: 1px solid #f0f0f0;
+                    border-top: 0;
+                    overflow-y: scroll;
+                    border-radius: 4px;
+                    position: relative;
+                    .file-all-load {
+                        text-align: center;
+                        font-size: 14px;
+                        color: #b1a7a7;
+                        line-height: 1.6;
+                    }
+                    .file-live-list {
+                        width: 100%;
+                        height: 100%;
+                        overflow-y: scroll;
+                    }
+                    .file-loading-container {
+                        position: absolute;
+                        bottom: 40px;
+                        width: 100%;
+                        text-align: center;
+                    }
+                    .file-item {
+                        height: 44px;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        border-bottom: 1px solid #eeeeee;
+                        &:last-child {
+                            border-bottom: 0;
+                        }
+                        .file-name {
+                            overflow: hidden;
+                            text-overflow:ellipsis;
+                            white-space: nowrap;
+                        }
+                        .file-cover {
+                            height: 100%;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            img {
+                                height: 36px;
+                                max-width: 100%;
+                                border-radius: 4px;
+                                cursor: pointer;
+                            }
+                        }
+                        .file-ext {
+                            text-align: center;
+                        }
+                        .file-action {
+
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
