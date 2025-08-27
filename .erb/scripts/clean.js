@@ -5,6 +5,8 @@ import webpackPaths from '../configs/webpack.paths';
 const foldersToRemove = [
   webpackPaths.distPath,
   webpackPaths.buildPath,
+  webpackPaths.buildPathTest,
+  webpackPaths.buildPathQa,
   webpackPaths.dllPath,
 ];
 
