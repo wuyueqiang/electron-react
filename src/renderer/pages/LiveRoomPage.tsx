@@ -59,6 +59,7 @@ import ScreenList from '../components/ScreenList';
 import Answer from '../components/Answer';
 import LotteryActivity from '../components/lottery/LotteryActivity';
 import LotteryWinnerList from '../components/lottery/LotteryWinnerList';
+import VideoSetting from "../components/VideoSetting"
 
 import { handleDeviceChange } from '../utils/deviceChangeHandler';
 
@@ -753,6 +754,9 @@ function LiveRoomPage() {
       {ysLiveClient ? (
         <LotteryWinnerList></LotteryWinnerList>
       ) : null}
+
+      {/* 摄像头设置弹窗 */}
+      {showVideoSettingVisibility ? <VideoSetting ysLiveClient={ysLiveClient} setMirror={setMirror} setShowVideoSetting={setShowVideoSetting} setCameraPosition={setCameraPosition}></VideoSetting> : null}
 
       <div className="room-wrap" id="room-wrap">
         <div className="roomRow">
