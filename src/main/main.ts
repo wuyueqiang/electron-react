@@ -10,7 +10,6 @@
  */
 import path from 'path';
 import { app, BrowserWindow, shell, ipcMain } from 'electron';
-import { autoUpdater } from 'electron-updater';
 import logger from 'electron-log';
 import { machineIdSync } from 'node-machine-id';
 import { randomUUID } from 'crypto';
@@ -18,6 +17,9 @@ import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 import os from 'os';
 import { execSync } from 'child_process';
+import { updateHandle } from './AppUpdater';
+import { UPDATE_URL } from '../renderer/config/index';
+
 
 // class AppUpdater {
 //   constructor() {
@@ -292,6 +294,7 @@ const createWindow = async () => {
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
   // new AppUpdater();
+  updateHandle(mainWindow, UPDATE_URL);
 };
 
 /**

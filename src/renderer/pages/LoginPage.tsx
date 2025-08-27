@@ -3,12 +3,12 @@ import { Form, Input, message as Message, Modal, Button } from 'antd';
 import { connect } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import './LoginPage.scss';
-import { LStorage } from '../utils/tools';
+import { getUUID, LStorage } from '../utils/tools';
 // import Store from 'electron-store'
 
 
 import IMGS from '../imgs';
-// import Update from '../components/Update';
+import Update from '../components/Update';
 import { youshuLogin, youshuSmsCode } from '../api';
 
 let times: number = 60;
@@ -102,6 +102,26 @@ function LoginPage() {
   const goToRoom = () => {
     navigate('/live-room/1755694599');
   };
+
+  useEffect(() => {
+    if (!LStorage.getItem('DEVICE_ID')) {
+      LStorage.setItem('DEVICE_ID', getUUID());
+    }
+
+    // 测试代码先不清理登录token
+    return
+
+
+    const userInfo = LStorage.getItem('USER_INFO') && LStorage.getItem('USER_INFO').app == 10120 ? LStorage.getItem('USER_INFO') : {};
+    LStorage.setItem('USER_INFO', {
+      ...userInfo,
+      liveToken: "",
+    });
+    curForm.current.setFieldsValue({
+      mobile: userInfo.mobile || '',
+      password: userInfo.password || '',
+    })
+  }, [])
 
   return (
     <div className="login-wrap">
@@ -214,7 +234,7 @@ function LoginPage() {
             </Button>
           </div>
 
-          {/* <Update></Update> */}
+          <Update></Update>
         </Form>
       </div>
     </div>
