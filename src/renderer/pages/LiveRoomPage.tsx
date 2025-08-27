@@ -53,6 +53,7 @@ import Test from '../components/Test';
 import Board from '../components/Board';
 import ControlBar from '../components/ControlBar';
 import Chat from '../components/Chat';
+import Pendant from '../components/Pendant';
 import { handleDeviceChange } from '../utils/deviceChangeHandler';
 
 // @ts-ignore
@@ -70,7 +71,12 @@ function LiveRoomPage() {
   const [currentBeautyStyle, setCurrentBeautyStyle] = useState(BeautyStyles[0]);
   const [isShowOutModal, setIsShowOutModal] = useState(false);
   const [showLoadingVisibility, setShowLoadingVisibility] = useState(false);
-
+  const [lotteryTask, setLotteryTask] = useState({
+    draw_interval: 0,
+    is_join_lottery: false,
+    lottery_task_id: 0,
+    prize_img: ''
+})
   const navigate = useNavigate();
   const dispatch = useDispatch();
   let EVENT: any;
@@ -736,14 +742,12 @@ function LiveRoomPage() {
             ></ControlBar>
           </div>
         </div>
-        {/* {ysLiveClient ? (
+        {ysLiveClient ? (
           <Pendant
             ysLiveClient={ysLiveClient}
-            dispatch={dispatch}
-            roomConfig={roomConfig}
             lotteryTask={lotteryTask}
           ></Pendant>
-        ) : null} */}
+        ) : null}
       </div>
       <div style={{ position: 'fixed', top: 0, left: 0, zIndex: 1000 }}>
         <button className="back-btn" onClick={() => navigate('/login')}>
