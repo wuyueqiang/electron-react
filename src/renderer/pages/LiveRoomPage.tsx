@@ -56,6 +56,7 @@ import Chat from '../components/Chat';
 import Pendant from '../components/Pendant';
 import DraggableModal from '../components/common/DraggableModal';
 import ScreenList from '../components/ScreenList';
+import Answer from '../components/Answer';
 
 import { handleDeviceChange } from '../utils/deviceChangeHandler';
 
@@ -78,8 +79,8 @@ function LiveRoomPage() {
     draw_interval: 0,
     is_join_lottery: false,
     lottery_task_id: 0,
-    prize_img: ''
-})
+    prize_img: '',
+  });
   const navigate = useNavigate();
   const dispatch = useDispatch();
   let EVENT: any;
@@ -111,7 +112,8 @@ function LiveRoomPage() {
   const [availableCameraResolution, setAvailableCameraResolution] = useState(
     [],
   );
-  const [showVideoSettingVisibility, setShowVideoSettingVisibility] = useState(false)
+  const [showVideoSettingVisibility, setShowVideoSettingVisibility] =
+    useState(false);
 
   const [currentCameraStreamEncoder, setCurrentCameraStreamEncoder] = useState(
     CameraStreamEncoderParams[2],
@@ -718,15 +720,24 @@ function LiveRoomPage() {
       ) : null}
 
       {/* 分享屏幕弹窗 */}
-      {screenVisibility ? <DraggableModal
+      {screenVisibility ? (
+        <DraggableModal
           title="选择共享内容"
           width={840}
           height={540}
-          close={() => dispatch(setValue({ key: 'screenVisibility', value: false }))}
+          close={() =>
+            dispatch(setValue({ key: 'screenVisibility', value: false }))
+          }
           visible={screenVisibility}
-      >
+        >
           <ScreenList ysLiveClient={ysLiveClient}></ScreenList>
-      </DraggableModal>: null}
+        </DraggableModal>
+      ) : null}
+
+      {/* 答题弹窗 */}
+      {ysLiveClient ? (
+        <Answer ysLiveClient={ysLiveClient} room_id={roomInfo.room_id}></Answer>
+      ) : null}
 
       <div className="room-wrap" id="room-wrap">
         <div className="roomRow">
@@ -741,11 +752,7 @@ function LiveRoomPage() {
               ) : null}
             </div>
             <div className="roomRight">
-              {ysLiveClient ? (
-                <Chat
-                  ysLiveClient={ysLiveClient}
-                ></Chat>
-              ) : null}
+              {ysLiveClient ? <Chat ysLiveClient={ysLiveClient}></Chat> : null}
             </div>
           </div>
           <div className="roomCtrl">

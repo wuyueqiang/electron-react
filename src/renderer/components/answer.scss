@@ -1,0 +1,102 @@
+.answer-wrap {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 99;
+  background: rgba(0, 0, 0, 0.5);
+
+  .answer-box {
+    width: 720px;
+    height: 520px;
+    background: #ffffff;
+    border-radius: 10px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    overflow: hidden;
+    transform: translate(-50%, -50%);
+    .close-btn {
+      display: block;
+      box-sizing: border-box;
+      width: 40px;
+      height: 40px;
+      padding: 10px;
+      position: absolute;
+      right: 5px;
+      top: 5px;
+      cursor: pointer;
+      img {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+    }
+    .box-title {
+      height: 50px;
+      width: 100%;
+      background: #f6f6f6;
+      text-align: center;
+      line-height: 50px;
+      font-size: 18px;
+      font-family:
+        PingFangSC-Medium,
+        PingFang SC;
+      font-weight: bold;
+      color: #151515;
+      margin: 0;
+    }
+    .main {
+      width: 100%;
+      height: 470px;
+      padding: 0 10px 10px;
+      box-sizing: border-box;
+      overflow-x: hidden;
+      overflow-y: scroll;
+      &::-webkit-scrollbar {
+        width: 0 !important;
+      }
+      .no-data {
+        padding-top: 110px;
+        img {
+          display: block;
+          width: 188px;
+          height: 140px;
+          margin: 0 auto 15px;
+        }
+        p {
+          font-size: 12px;
+          font-family:
+            PingFangSC-Regular,
+            PingFang SC;
+          font-weight: 400;
+          color: #666666;
+          text-align: center;
+        }
+      }
+    }
+  }
+  .btn {
+    color: #2baf6a;
+  }
+  .preview-btn {
+    padding: 0px;
+    margin: 0 10px;
+  }
+  .btn-active {
+    color: #ff6f27;
+  }
+  .disable {
+    color: #969696;
+  }
+}
+.ant-table {
+  color: #545454 !important;
+}
+.ant-table-thead > tr > th {
+  color: #acacac !important;
+}
+.ant-popover-inner {
+  border-radius: 10px !important;
+}

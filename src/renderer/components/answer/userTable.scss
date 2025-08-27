@@ -1,0 +1,43 @@
+.user-table-box {
+  .box-top {
+    height: 48px;
+    box-sizing: border-box;
+    padding-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .tips {
+      height: 17px;
+      font-size: 12px;
+      font-family:
+        PingFangSC-Regular,
+        PingFang SC;
+      font-weight: 400;
+      color: #acacac;
+      line-height: 17px;
+      margin: 0;
+    }
+    .user-tab-box {
+      width: 100px;
+      padding-right: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      p {
+        height: 17px;
+        font-size: 12px;
+        font-family:
+          PingFangSC-Regular,
+          PingFang SC;
+        font-weight: 400;
+        color: #545454;
+        line-height: 17px;
+        margin: 0;
+        cursor: pointer;
+        &.active {
+          font-weight: bold;
+        }
+      }
+    }
+  }
+}
