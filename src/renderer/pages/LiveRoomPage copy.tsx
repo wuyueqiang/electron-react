@@ -150,7 +150,9 @@ function LiveRoomPage() {
             停止直播
           </Button>
           
-          <Button onClick={() => navigate('/live-list')}>
+          <Button onClick={() => navigate('/live-list', {
+            replace: true,
+          })}>
             返回列表
           </Button>
         </div>

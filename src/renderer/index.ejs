@@ -9,9 +9,8 @@
     <title>客户端</title>
     <script>
       (() => {
-        // 根据环境动态加载 libs 文件
-        const isDev = process.env.NODE_ENV === 'development';
-        const basePath = isDev ? './libs' : './libs';
+        // 动态加载 libs 文件
+        const basePath = './libs';
         
         // 加载 CSS 文件
         const cssFiles = [

@@ -471,6 +471,7 @@ function LiveRoomPage() {
     const liveStatus = routeParams?.liveStatus;
     const sortType = routeParams?.sortType;
     navigate('/live-list', {
+      replace: true,
       state: {
         liveStatus,
         sortType,
@@ -739,7 +740,9 @@ function LiveRoomPage() {
 
   useEffect(() => {
     if (!roomId) {
-      navigate('/login');
+      navigate('/login', {
+        replace: true,
+      });
       return;
     }
 
@@ -838,13 +841,17 @@ function LiveRoomPage() {
             },
             onCancel: () => {
               // 后退一步
-              navigate(-1);
+              navigate('/live-list', {
+                replace: true,
+              });
             },
           });
         } else {
           message.error(`${res.status.code}-${res.status.msg}`);
           console.warn(res);
-          navigate(-1);
+          navigate('/live-list', {
+            replace: true,
+          });
         }
       })
       .catch((error) => {

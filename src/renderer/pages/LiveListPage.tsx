@@ -155,7 +155,9 @@ function LiveListPage() {
   
   // 退出登录页
   function handleLoginOut() {
-    navigate('/login');
+    navigate('/login', {
+      replace: true,
+    });
   }
   
   // 进入直播房间
@@ -167,6 +169,7 @@ function LiveListPage() {
     dispatch(setValue({ key: 'roomInfo', value: { room_id: roomId } }));
     
     navigate(`/live-room/${roomId}`, {
+      replace: true,
       state: {
         liveStatus,
         sortType,

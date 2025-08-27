@@ -46,7 +46,9 @@ function LoginPage() {
           setTimeout(async () => {
             console.log('====', LStorage.getItem('USER_INFO'));
 
-            navigate('/live-list');
+            navigate('/live-list', {
+              replace: true,
+            });
           }, 1000);
         } else if (res.code == 6010010) {
           Message.warning('密码错误');
@@ -107,10 +109,6 @@ function LoginPage() {
     if (!LStorage.getItem('DEVICE_ID')) {
       LStorage.setItem('DEVICE_ID', getUUID());
     }
-
-    // 测试代码先不清理登录token
-    return
-
 
     const userInfo = LStorage.getItem('USER_INFO') && LStorage.getItem('USER_INFO').app == 10120 ? LStorage.getItem('USER_INFO') : {};
     LStorage.setItem('USER_INFO', {

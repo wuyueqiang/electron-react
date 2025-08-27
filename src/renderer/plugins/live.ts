@@ -590,9 +590,18 @@ export default class YSElectronLive {
         //         this.rtcCloud.exitRoom();
         //     })
         // }
-        this.teduBoard && this.teduBoard.destroy()
-        this.tim && this.logoutIm();
-        this.rtcCloud.exitRoom();
+        if (this.teduBoard) {
+            this.teduBoard.destroy()
+            this.teduBoard = null
+        }
+        if (this.tim) {
+            this.tim.destroy()
+            this.tim = null
+        }
+        if (this.rtcCloud) {
+            this.rtcCloud.exitRoom();
+            this.rtcCloud = null
+        }
     }
 
     /**
@@ -1120,10 +1129,13 @@ export default class YSElectronLive {
      * 登出IM
      */
     logoutIm() {
+        if(!this.tim) {
+            return;
+        }
         let that= this
         let promise = this.tim.logout();
         promise.then(function() {
-            // console.log('logout success'); // 登出成功
+            console.log('logout success'); // 登出成功
             that.tim.destroy()
             that.tim = null
         }).catch(function(imError: any) {
