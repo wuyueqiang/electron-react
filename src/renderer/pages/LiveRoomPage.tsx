@@ -57,6 +57,8 @@ import Pendant from '../components/Pendant';
 import DraggableModal from '../components/common/DraggableModal';
 import ScreenList from '../components/ScreenList';
 import Answer from '../components/Answer';
+import LotteryActivity from '../components/lottery/LotteryActivity';
+import LotteryWinnerList from '../components/lottery/LotteryWinnerList';
 
 import { handleDeviceChange } from '../utils/deviceChangeHandler';
 
@@ -737,6 +739,19 @@ function LiveRoomPage() {
       {/* 答题弹窗 */}
       {ysLiveClient ? (
         <Answer ysLiveClient={ysLiveClient} room_id={roomInfo.room_id}></Answer>
+      ) : null}
+
+      {/* 抽奖活动配置弹窗 */}
+      {ysLiveClient ? (
+        <LotteryActivity
+          ysLiveClient={ysLiveClient}
+          room_id={roomInfo.room_id}
+        ></LotteryActivity>
+      ) : null}
+
+      {/* 抽奖中奖用户弹窗 */}
+      {ysLiveClient ? (
+        <LotteryWinnerList></LotteryWinnerList>
       ) : null}
 
       <div className="room-wrap" id="room-wrap">

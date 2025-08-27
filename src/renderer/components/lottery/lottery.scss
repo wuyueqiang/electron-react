@@ -1,0 +1,146 @@
+.lottery-wrap {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 99;
+    background: rgba(0,0,0,.5);  
+
+    .lottery-box {
+        width: 720px;
+        height: 520px;
+        background: #FFFFFF;
+        border-radius: 10px;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        overflow: hidden;
+        transform: translate(-50%, -50%);
+        .close-btn {
+            display: block;
+            box-sizing: border-box;
+            width: 40px;
+            height: 40px;
+            padding: 10px;
+            position: absolute;
+            right: 5px;
+            top: 5px;
+            cursor: pointer;
+            img {
+                display: block;
+                width: 100%;
+                height: 100%;
+            }
+        }
+        .box-title {
+            height: 50px;
+            width: 100%;
+            background: #F6F6F6;
+            text-align: center;
+            line-height: 50px;
+            font-size: 18px;
+            font-family: PingFangSC-Medium, PingFang SC;
+            font-weight: bold;
+            color: #151515;
+            margin: 0;
+        }
+        .main {
+            width: 100%;
+            height: 470px;
+            padding: 0 10px 10px;
+            box-sizing: border-box;
+            overflow-x: hidden;
+            overflow-y: scroll;
+            &::-webkit-scrollbar{
+                width: 0 !important;
+            }
+            .no-data{
+                padding-top: 110px;
+                img {
+                    display: block;
+                    width: 188px;
+                    height: 140px;
+                    margin: 0 auto 15px;
+                }
+                p {
+                    font-size: 12px;
+                    font-family: PingFangSC-Regular, PingFang SC;
+                    font-weight: 400;
+                    color: #666666;
+                    text-align: center;
+                }
+            }
+        }
+    }
+    .ant-tabs-tab-btn {
+        color: #151515 !important;
+    }
+    .ant-tabs-ink-bar {
+        background: #2BAF6A !important;
+    }
+    .end {
+        color: #FF6B28 !important;
+    }
+    .start {
+        color: #2BAF6A !important;
+    }
+    .ant-radio-checked .ant-radio-inner {
+        border-color: #FF6F27 !important;
+    }
+    .ant-radio-inner::after {
+        background-color: #FF6F27 !important;
+    }
+
+    .send-box {
+        box-sizing: border-box;
+        padding: 24px;
+        width: 340px;
+        height: 238px;
+        background: #FFFFFF;
+        border-radius: 10px;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        overflow: hidden;
+        transform: translate(-50%, -50%);
+        filter: drop-shadow(0px 0px 20px rgba(0, 0, 0, 0.16));
+        .send-title {
+            color: #151515;
+            text-align: center;
+            font-family: PingFang SC;
+            font-size: 16px;
+            font-style: normal;
+            font-weight: 500;
+            line-height: normal;
+        }
+        .flex {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 20px;
+            p {
+                margin-bottom: 0;
+            }
+            .flex-number {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                
+            }
+            
+        }
+        .btn-box {
+            width: 100%;
+            position: absolute;
+            left: 0;
+            bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            .submit-btn {
+                margin-left: 15px;
+            }
+        }
+    }
+}
