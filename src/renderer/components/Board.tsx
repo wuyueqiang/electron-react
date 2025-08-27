@@ -406,9 +406,23 @@ export default function Board(props: NewBoardParam) {
         let list: any = [];
         setTimeout(() => {
             files.forEach((item: any) => {
+                console.log('====item', item);
+                
                 let thumbs = teduBoard.getThumbnailImages(item.fid);
                 let ids = teduBoard.getFileBoardList(item.fid);
                 let file = teduBoard.getFileInfo(item.fid);
+
+                // 序列化 boardInfoList，只保留需要的属性
+                let serializedBoardInfoList = [];
+                if (file.boardInfoList && file.boardInfoList.length > 0) {
+                    serializedBoardInfoList = file.boardInfoList.map((boardInfo: any) => ({
+                        boardId: boardInfo.boardId,
+                        backgroundUrl: boardInfo.backgroundUrl || '',
+                        backgroundColor: boardInfo.backgroundColor || 'rgba(255, 255, 255, 1)',
+                        // 只保留可序列化的属性
+                    }));
+                }
+
                 let boardThumbs = thumbs.map((thumb: string, index: number) => {
                     return {
                         fid: item.fid,
@@ -426,9 +440,9 @@ export default function Board(props: NewBoardParam) {
                     ftype = 'video'
                     cover = item.downloadURL.includes('livevod')?coverImg : item.downloadURL + '&x-oss-process=video/snapshot,t_1000,f_jpg,w_0,h_0,m_fast';
                 }
-                if (item.type == 6 && file.boardInfoList.length > 0) {
+                if (item.type == 6 && serializedBoardInfoList.length > 0) {
                     ftype = 'img'
-                    cover = file.boardInfoList[0].backgroundUrl;
+                    cover = serializedBoardInfoList[0].backgroundUrl;
                     sign = Tool.getId(cover, 'sign')
                 }
                 list.push({
@@ -438,7 +452,8 @@ export default function Board(props: NewBoardParam) {
                     id: item.fid,
                     ftype,
                     sign,
-                    currentBoardId: ids[0] ? ids[0] : ''
+                    currentBoardId: ids[0] ? ids[0] : '',
+                    boardInfoList: serializedBoardInfoList
                 })
 
             })
