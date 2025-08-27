@@ -54,6 +54,9 @@ import Board from '../components/Board';
 import ControlBar from '../components/ControlBar';
 import Chat from '../components/Chat';
 import Pendant from '../components/Pendant';
+import DraggableModal from '../components/common/DraggableModal';
+import ScreenList from '../components/ScreenList';
+
 import { handleDeviceChange } from '../utils/deviceChangeHandler';
 
 // @ts-ignore
@@ -87,6 +90,8 @@ function LiveRoomPage() {
     roomInfo,
     isStart,
     isOpenCamera,
+    screenVisibility,
+    screenList,
     cameraList,
     micList,
     speakerList,
@@ -711,6 +716,17 @@ function LiveRoomPage() {
       {testVisibility ? (
         <Test ysLiveClient={ysLiveClient} setMirror={setMirror}></Test>
       ) : null}
+
+      {/* 分享屏幕弹窗 */}
+      {screenVisibility ? <DraggableModal
+          title="选择共享内容"
+          width={840}
+          height={540}
+          close={() => dispatch(setValue({ key: 'screenVisibility', value: false }))}
+          visible={screenVisibility}
+      >
+          <ScreenList ysLiveClient={ysLiveClient}></ScreenList>
+      </DraggableModal>: null}
 
       <div className="room-wrap" id="room-wrap">
         <div className="roomRow">

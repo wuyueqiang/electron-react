@@ -1,0 +1,89 @@
+.screenDialogBody {
+    height: 100%;
+    box-sizing: border-box;
+    padding: 10px 20px 50px 20px;
+    text-align: center;
+    display: flex;
+    flex-wrap: wrap;
+    overflow-y: scroll;
+    position: relative;
+    .screenTitle {
+        width: 100%;
+        font-size: 14px;
+        font-family: PingFangSC-Medium, PingFang SC;
+        font-weight: 500;
+        color: #151515;
+        line-height: 19px;
+        margin: 20px 0 0 0;
+        text-align: left;
+        box-sizing: border-box;
+        padding-left: 10px;
+    }
+    .screenDialogCard {
+        width: 180px;
+        text-align: center;
+        height: 130px;
+        cursor: pointer;
+        display: block;
+        margin: 10px;
+        padding: 13px 5px 0;
+        border: 1px solid #e8e8e8;
+        border-radius: 8px;
+        position: relative;
+        .screenName {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 0 10px;
+            font-size: 13px;
+            font-family: PingFangSC-Regular, PingFang SC;
+            font-weight: 400;
+            color: #151515;
+            line-height: 20px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            position: absolute;
+            left: 0;
+            bottom: 5px;
+            margin: 0;
+        }
+    }
+    .active {
+        border: 1px solid #2BAF6A;
+    }
+    .btn-box{
+        box-sizing: border-box;
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        height: 50px;
+        width: 100%;
+        background-color: #F2F3F7;
+        display: flex;
+        justify-content: space-between;
+        flex-direction: row-reverse;
+        align-items: center;
+        .btn {
+            background-color: #2BAF6A;
+            border: none;
+            color: #FFFFFF;
+            margin-right: 20px;
+            &:disabled {
+                background-color: #eeeeee !important;
+                color: #d9d9d9 !important;
+            }
+        }
+        .checkbox {
+            margin-left: 20px;
+            .ant-checkbox-checked .ant-checkbox-inner {
+                background-color: #2BAF6A;
+                border-color: #2BAF6A;
+            }
+            .ant-checkbox-wrapper:hover .ant-checkbox-inner, .ant-checkbox:hover .ant-checkbox-inner, .ant-checkbox-input:focus + .ant-checkbox-inner {
+                border-color: #2BAF6A;
+            }
+        }
+    }
+}
+
+
