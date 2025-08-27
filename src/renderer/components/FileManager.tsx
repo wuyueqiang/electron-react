@@ -332,7 +332,7 @@ export default function FileManager(props: FileManagerParams) {
         })
         if (info.file_ext == FILE_EXT.AUDIO) {
             ysLiveClient.stopPlayMusic(1)
-            dispatch(setValue('liveBGM', {}))
+            dispatch(setValue({ key: 'liveBGM', value: {} }))
             Message.destroy('file')
         }else {
             delBoardFile(info)
@@ -788,7 +788,7 @@ export default function FileManager(props: FileManagerParams) {
     function setBGM(url: any, title: string, sign: string) {
         ysLiveClient.stopPlayMusic(1)
         // 设置背景音乐数据
-        dispatch(setValue('liveBGM', {url, title, sign}))
+        dispatch(setValue({key: 'liveBGM', value: {url, title, sign}}))
     }
 
     // 删除转码后的本地文件

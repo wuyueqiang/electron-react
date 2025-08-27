@@ -1,9 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import {
-  TRTCVideoResolutionMode,
-} from 'trtc-electron-sdk/liteav/trtc_define';
+import { TRTCVideoResolutionMode } from 'trtc-electron-sdk/liteav/trtc_define';
 import {
   LIVE_STAGE,
   CameraStreamEncoderParams,
@@ -12,18 +10,14 @@ import {
   BeautyStyles,
   VideoCallUserParams,
 } from '../vars/room-vars';
-import { useNetworkState  } from 'react-use';
+import { useNetworkState } from 'react-use';
 import { VERSION } from '../config/index';
 import { Modal, message, notification, Button } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import YSElectronLive from '../plugins/live';
 import './LiveRoomPage.scss';
 import { selectRoomConfig, selectRouteParams } from '../reducers/index';
-import {
-  setValue,
-  setList,
-  setDevice
-} from '../reducers/roomConfigSlice';
+import { setValue, setList, setDevice } from '../reducers/roomConfigSlice';
 import { initYsLiveClient } from '../reducers/ysLiveClientSlice';
 import { LStorage } from '../utils/tools';
 import {
@@ -36,6 +30,7 @@ import {
 import {
   startBoardPushAction,
   updateMixLiveAction,
+  startLiveAction,
 } from '../reducers/roomConfigThunks';
 import Test from '../components/Test';
 import Board from '../components/Board';
@@ -54,7 +49,7 @@ import { handleDeviceChange } from '../utils/deviceChangeHandler';
 
 // @ts-ignore
 let ysLiveClient: any = null;
-let testLive: boolean = false; // 是否是测试直播
+// let testLive: boolean = false; // 是否是测试直播
 
 function LiveRoomPage() {
   const { roomId } = useParams<{ roomId: string }>();
@@ -93,6 +88,7 @@ function LiveRoomPage() {
     cameraPosition,
     currentScreen,
     videoCallUserList,
+    isTestLive,
   } = roomConfig;
   const routeParams = useSelector(selectRouteParams);
 
@@ -108,13 +104,17 @@ function LiveRoomPage() {
 
   function onError(result: any) {
     console.log('onError', result);
-  //   dispatch(setLog(LIVE_ACTIONS.Error, {
-  //     ...result
-  // }))
+    //   dispatch(setLog(LIVE_ACTIONS.Error, {
+    //     ...result
+    // }))
   }
 
   function onStartLivePush(result: any) {
-    console.log('onStartLivePush', result);
+    // console.log('onStartLivePush', result);
+    dispatch(startLiveAction(isTestLive) as any);
+    setTimeout(() => {
+      dispatch(updateMixLiveAction() as any);
+    }, 2000);
   }
 
   // SDK 跟服务器的连接断开
@@ -198,7 +198,9 @@ function LiveRoomPage() {
         });
         let result = JSON.parse(data.quote);
         console.log('抽奖结果', result);
-        dispatch(setList({ name: 'lotteryWinner', list: result.winner_user_list }));
+        dispatch(
+          setList({ name: 'lotteryWinner', list: result.winner_user_list }),
+        );
         dispatch(setValue({ key: 'showLotteryWinnerList', value: true }));
         break;
       case 'liveLotteryTaskEnd':
@@ -407,7 +409,7 @@ function LiveRoomPage() {
 
   // 关闭应用
   function onCloseWindow() {
-    if (testLive) {
+    if (isTestLive) {
       message.warning('请先结束测试！');
       return;
     }
@@ -517,7 +519,7 @@ function LiveRoomPage() {
     dispatch(setValue({ key: 'isOpenCamera', value: true }));
     dispatch(setValue({ key: 'isOpenMic', value: true }));
     dispatch(setValue({ key: 'isTestLive', value: is_test }));
-    testLive = is_test;
+    // testLive = is_test;
 
     uploadTeacherAvDevice(true);
     dispatch(
@@ -548,7 +550,7 @@ function LiveRoomPage() {
     dispatch(setValue({ key: 'isStart', value: false }));
     dispatch(setValue({ key: 'isOpenCamera', value: false }));
     dispatch(setValue({ key: 'isTestLive', value: false }));
-    testLive = false;
+    // testLive = false;
     dispatch(
       setDevice({
         name: 'mic',
@@ -725,16 +727,15 @@ function LiveRoomPage() {
     if (networkState.online) {
       notification.destroy('online');
     } else {
-        const args = {
-            message: '提醒',
-            description:
-                '哎呀断网了，请检测您的网络...',
-            duration: 0,
-            key: 'online'
-        };
-        notification.open(args);
+      const args = {
+        message: '提醒',
+        description: '哎呀断网了，请检测您的网络...',
+        duration: 0,
+        key: 'online',
+      };
+      notification.open(args);
     }
-  }, [networkState.online])
+  }, [networkState.online]);
 
   useEffect(() => {
     if (!roomId) {

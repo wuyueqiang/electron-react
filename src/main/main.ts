@@ -9,7 +9,7 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, shell, ipcMain } from 'electron';
+import { app, BrowserWindow, shell, ipcMain, systemPreferences } from 'electron';
 import logger from 'electron-log';
 import { machineIdSync } from 'node-machine-id';
 import { randomUUID } from 'crypto';
@@ -30,6 +30,36 @@ import { UPDATE_URL } from '../renderer/config/index';
 // }
 
 let mainWindow: BrowserWindow | null = null;
+
+ipcMain.on('enterRoom', (event, user_id) => {
+  // 检查麦克风/摄像头权限
+  checkAndApplyDeviceAccessPrivilege()
+})
+
+const checkAndApplyDeviceAccessPrivilege = async () => {
+  // console.log('systemPreferences', systemPreferences);
+  
+  const cameraPrivilege = systemPreferences.getMediaAccessStatus('camera');
+  // console.log(
+  //     `checkAndApplyDeviceAccessPrivilege before apply cameraPrivilege: ${cameraPrivilege}`
+  // );
+  if (cameraPrivilege !== 'granted') {
+      await systemPreferences.askForMediaAccess('camera');
+  }
+
+  const micPrivilege = systemPreferences.getMediaAccessStatus('microphone');
+  // console.log(
+  //     `checkAndApplyDeviceAccessPrivilege before apply micPrivilege: ${micPrivilege}`
+  // );
+  if (micPrivilege !== 'granted') {
+      await systemPreferences.askForMediaAccess('microphone');
+  }
+
+  const screenPrivilege = systemPreferences.getMediaAccessStatus('screen');
+  // console.log(
+  //     `checkAndApplyDeviceAccessPrivilege before apply screenPrivilege: ${screenPrivilege}`
+  // );
+}
 
 ipcMain.on('exit', () => {
   app.exit();

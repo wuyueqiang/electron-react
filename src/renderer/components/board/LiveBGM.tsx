@@ -161,7 +161,7 @@ export default function LiveBGM(props: LiveBGMParams) {
     useEffect(() => {
         setAllMusicVolume(80)
         if (LStorage.getItem('liveBGM')) {
-            dispatch(setValue('liveBGM', LStorage.getItem('liveBGM')))
+            dispatch(setValue({key: 'liveBGM', value: LStorage.getItem('liveBGM')}))
         }
         return() => {
             
@@ -236,7 +236,7 @@ export default function LiveBGM(props: LiveBGMParams) {
                 <Button type="text" size="small" className="music-quit-btn" icon={<ImgIcon.MusicQuit className="contrl-btn"/>} onClick={()=>{
                     stopPlayMusic()
                     init ()
-                    dispatch(setValue('liveBGM', {}))
+                    dispatch(setValue({key: 'liveBGM', value: {}}))
                 }}>
                     结束音频
                 </Button> 

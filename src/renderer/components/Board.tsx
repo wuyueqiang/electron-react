@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import Mousetrap from 'mousetrap';
+// import Mousetrap from 'mousetrap';
 import { Button, Slider, InputNumber, Switch, Modal, notification, message as Message } from 'antd';
 import { LeftCircleOutlined, LeftOutlined, RightOutlined} from '@ant-design/icons'
 import { LStorage, Tool } from '../utils/tools';
@@ -77,14 +77,14 @@ export default function Board(props: NewBoardParam) {
             // console.log('TEB_INIT', data)
             setSize(50);
             onSetToolType(1);
-            errorLog({
-                code: "TEB_INIT",
-                log_type: "MESSAGE_LOG",
-                request_data: {
-                    room_id: roomConfig?.roomInfo?.room_id,
-                },
-                message: '白板初始化成功'
-            }, "INFO")
+            // errorLog({
+            //     code: "TEB_INIT",
+            //     log_type: "MESSAGE_LOG",
+            //     request_data: {
+            //         room_id: roomConfig?.roomInfo?.room_id,
+            //     },
+            //     message: '白板初始化成功'
+            // }, "INFO")
         });
 
         // 互动白板截图（快照）回调
@@ -98,35 +98,35 @@ export default function Board(props: NewBoardParam) {
         // 互动白板错误事件
         teduBoard.on(TEduBoard.EVENT.TEB_ERROR, (errorCode: any, errorMessage: any) => {
             console.error(errorCode, errorMessage)
-            errorLog({
-                code: "TEB_ERROR",
-                log_type: "MESSAGE_LOG",
-                request_data: {
-                    room_id: roomConfig?.roomInfo?.room_id,
-                },
-                response_data: {
-                    code: errorCode||'',
-                    msg: errorMessage||''
-                },
-                message: errorMessage||''
-            }, "INFO")
+            // errorLog({
+            //     code: "TEB_ERROR",
+            //     log_type: "MESSAGE_LOG",
+            //     request_data: {
+            //         room_id: roomConfig?.roomInfo?.room_id,
+            //     },
+            //     response_data: {
+            //         code: errorCode||'',
+            //         msg: errorMessage||''
+            //     },
+            //     message: errorMessage||''
+            // }, "INFO")
         });
 
         // 互动白板警告事件
         teduBoard.on(TEduBoard.EVENT.TEB_WARNING, (warnCode: any, warnMessage: any) => {
             console.error(warnCode, warnMessage)
-            errorLog({
-                code: "TEB_WARNING",
-                log_type: "MESSAGE_LOG",
-                request_data: {
-                    room_id: roomConfig?.roomInfo?.room_id,
-                },
-                response_data: {
-                    code: warnCode||'',
-                    msg: warnMessage||''
-                },
-                message: warnMessage||''
-            }, "INFO")
+            // errorLog({
+            //     code: "TEB_WARNING",
+            //     log_type: "MESSAGE_LOG",
+            //     request_data: {
+            //         room_id: roomConfig?.roomInfo?.room_id,
+            //     },
+            //     response_data: {
+            //         code: warnCode||'',
+            //         msg: warnMessage||''
+            //     },
+            //     message: warnMessage||''
+            // }, "INFO")
         });
 
         // 视频播放状态回调
@@ -702,25 +702,28 @@ export default function Board(props: NewBoardParam) {
                 dispatch(setValue({ key: 'isTested', value: true }));
             }
             ysLiveClient.initBoard({
-                id: 'board-wrap'
+                id: 'board-wrap',
+                logLevel: 0,
             })
+
             teduBoard = ysLiveClient.teduBoard;
             teduBoard.setDataSyncEnable(true)
             teduBoard.setRemoteCursorVisible(true)
             teduBoard.setSyncVideoStatusEnable(true)
             // 注册键盘事件
-            Mousetrap.bind('left', function() {
-                prevStep();
-            })
-            Mousetrap.bind('right', function() {
-                nextStep();
-            })
-            Mousetrap.bind('up', function() {
-                prevStep();
-            })
-            Mousetrap.bind('down', function() {
-                nextStep();
-            })
+            // Mousetrap.bind('left', function() {
+            //     prevStep();
+            // })
+            // Mousetrap.bind('right', function() {
+            //     nextStep();
+            // })
+            // Mousetrap.bind('up', function() {
+            //     prevStep();
+            // })
+            // Mousetrap.bind('down', function() {
+            //     nextStep();
+            // })
+            
 
             ysLiveClient.on(EVENT.TIM_DIGG_RECEIVED, onDiggReceived);
             ysLiveClient.on(EVENT.TIM_ONLINE_NUMS_RECEIVED, onOnlineNumsReceived);
@@ -738,10 +741,10 @@ export default function Board(props: NewBoardParam) {
             teduBoard && teduBoard.destroy()
             ysLiveClient.off(EVENT.TIM_DIGG_RECEIVED, onDiggReceived);
             ysLiveClient.off(EVENT.TIM_ONLINE_NUMS_RECEIVED, onOnlineNumsReceived);
-            Mousetrap.unbind('left')
-            Mousetrap.unbind('right')
-            Mousetrap.unbind('up')
-            Mousetrap.unbind('down')
+            // Mousetrap.unbind('left')
+            // Mousetrap.unbind('right')
+            // Mousetrap.unbind('up')
+            // Mousetrap.unbind('down')
         }
     }, [])
 
@@ -963,7 +966,7 @@ export default function Board(props: NewBoardParam) {
             <DraggableModal
                 title="选择课件"
                 width={800}
-                close={() => dispatch(setValue('fileVisibility', false))}
+                close={() => dispatch(setValue({ key: 'fileVisibility', value: false }))}
                 visible={fileVisibility}
             >
                 {
