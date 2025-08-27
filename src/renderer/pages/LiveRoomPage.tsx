@@ -26,10 +26,7 @@ import { Modal, message, notification, Button } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import YSElectronLive from '../plugins/live';
 import './LiveRoomPage.scss';
-import {
-  selectRoomConfig,
-  selectRouteParams,
-} from '../reducers/index';
+import { selectRoomConfig, selectRouteParams } from '../reducers/index';
 import {
   setValue,
   setList,
@@ -41,13 +38,21 @@ import {
 } from '../reducers/roomConfigSlice';
 import { initYsLiveClient } from '../reducers/ysLiveClientSlice';
 import { LStorage } from '../utils/tools';
-import { enterLiveRoom, TeacherQuitRoom, SaveTeacherAvDevice } from '../api';
+import {
+  enterLiveRoom,
+  TeacherQuitRoom,
+  SaveTeacherAvDevice,
+  CancelLive,
+  StopWhiteBoardPush,
+} from '../api';
 import {
   startBoardPushAction,
   updateMixLiveAction,
 } from '../reducers/roomConfigThunks';
 import Test from '../components/Test';
 import Board from '../components/Board';
+import ControlBar from '../components/ControlBar';
+import Chat from '../components/Chat';
 import { handleDeviceChange } from '../utils/deviceChangeHandler';
 
 // @ts-ignore
@@ -72,12 +77,31 @@ function LiveRoomPage() {
 
   // 使用Redux选择器获取状态
   const roomConfig = useSelector(selectRoomConfig);
-  const { roomInfo, isStart, cameraList, micList, speakerList, isMirror, isTested, testVisibility, visibilityStatus, liveStatus, cameraPosition, isOpenMic, deviceStatus, liveBGM, liveStage } = roomConfig;
+  const {
+    roomInfo,
+    isStart,
+    isOpenCamera,
+    cameraList,
+    micList,
+    speakerList,
+    isMirror,
+    isTested,
+    testVisibility,
+    visibilityStatus,
+    liveStatus,
+    cameraPosition,
+    isOpenMic,
+    deviceStatus,
+    liveBGM,
+    liveStage,
+  } = roomConfig;
   const routeParams = useSelector(selectRouteParams);
 
   const [availableCameraResolution, setAvailableCameraResolution] = useState(
     [],
   );
+  const [showVideoSettingVisibility, setShowVideoSettingVisibility] = useState(false)
+
   const [currentCameraStreamEncoder, setCurrentCameraStreamEncoder] = useState(
     CameraStreamEncoderParams[2],
   );
@@ -327,6 +351,25 @@ function LiveRoomPage() {
     });
   }
 
+  // 打开摄像头
+  function muteLocalVideo() {
+    if (!isStart) {
+      notification.warning({
+        message: '通知',
+        description: '直播开始才可以打开摄像头',
+      });
+      return;
+    }
+    dispatch(setValue({ key: 'isOpenCamera', value: !isOpenCamera }));
+    uploadTeacherAvDevice(!isOpenCamera);
+    // if (!isOpenCamera) {
+    //     dispatch(setLog(LIVE_ACTIONS.anchorCloseCamera))
+    // } else {
+    //     dispatch(setLog(LIVE_ACTIONS.anchorOpenCamera))
+    // }
+    dispatch(updateMixLiveAction() as any);
+  }
+
   // 开始直播
   function startLivePush(is_test: boolean) {
     if (!isTested) {
@@ -372,6 +415,46 @@ function LiveRoomPage() {
   function startBoardPush() {
     dispatch(startBoardPushAction() as any);
     // dispatch(setLog(LIVE_ACTIONS.startBoardPush));
+  }
+
+  // 停止直播推流
+  function stopLivePush(endLive: boolean) {
+    ysLiveClient.stopLivePush();
+    dispatch(setValue({ key: 'isStart', value: false }));
+    dispatch(setValue({ key: 'isOpenCamera', value: false }));
+    dispatch(setValue({ key: 'isTestLive', value: false }));
+    testLive = false;
+    dispatch(
+      setDevice({
+        name: 'mic',
+        device: {
+          volume: 0,
+        },
+      }),
+    );
+    ysLiveClient.stopSystemAudioLoopback();
+    ysLiveClient.stopScreenCapture();
+    window.electron?.ipcRenderer.sendMessage('stopLivePush');
+    // dispatch(setLog(LIVE_ACTIONS.anchorStopPush));
+    // dispatch(setLog(LIVE_ACTIONS.stopBoardPush));
+
+    Promise.all([
+      StopWhiteBoardPush(roomInfo.room_id, userInfo.userId),
+      CancelLive(roomInfo.room_id, userInfo.userId, userInfo.app, endLive),
+    ]).then((res) => {
+      // console.log('res', res)
+      if (res[0].status.code != 200) {
+        message.error(`${res[0].status.code}-${res[0].status.msg}`);
+      }
+      if (res[1].status.code != 200) {
+        message.error(`${res[1].status.code}-${res[1].status.msg}`);
+      } else {
+        // 修改状态为已结束
+        if (endLive) {
+          dispatch(setValue({ key: 'liveStage', value: LIVE_STAGE.END_STAGE }));
+        }
+      }
+    });
   }
 
   // 设置摄像头画面质量
@@ -455,6 +538,11 @@ function LiveRoomPage() {
     }
     // 切换到相应位置log
     dispatch(updateMixLiveAction() as any);
+  }
+
+  // 显示摄像头设置弹窗
+  function setShowVideoSetting(val: boolean) {
+    setShowVideoSettingVisibility(val);
   }
 
   useEffect(() => {
@@ -615,10 +703,7 @@ function LiveRoomPage() {
 
       {/* 检测弹窗 */}
       {testVisibility ? (
-        <Test
-          ysLiveClient={ysLiveClient}
-          setMirror={setMirror}
-        ></Test>
+        <Test ysLiveClient={ysLiveClient} setMirror={setMirror}></Test>
       ) : null}
 
       <div className="room-wrap" id="room-wrap">
@@ -633,26 +718,22 @@ function LiveRoomPage() {
                 ></Board>
               ) : null}
             </div>
-            {/* <div className="roomRight">
+            <div className="roomRight">
               {ysLiveClient ? (
                 <Chat
-                  dispatch={dispatch}
                   ysLiveClient={ysLiveClient}
-                  roomConfig={roomConfig}
                 ></Chat>
               ) : null}
-            </div> */}
+            </div>
           </div>
           <div className="roomCtrl">
-            {/* <ControlBar
+            <ControlBar
               ysLiveClient={ysLiveClient}
-              dispatch={dispatch}
-              roomConfig={roomConfig}
               muteLocalVideo={muteLocalVideo}
               stopLivePush={stopLivePush}
               exitRoom={exitRoom}
               setShowVideoSetting={setShowVideoSetting}
-            ></ControlBar> */}
+            ></ControlBar>
           </div>
         </div>
         {/* {ysLiveClient ? (
@@ -667,19 +748,6 @@ function LiveRoomPage() {
       <div style={{ position: 'fixed', top: 0, left: 0, zIndex: 1000 }}>
         <button className="back-btn" onClick={() => navigate('/login')}>
           back
-        </button>
-        <h1>Room</h1>
-        <button onClick={() => startLivePush(false)}>startLivePush</button>
-        <div
-          id="room-camera-view"
-          style={{ width: '100px', height: '100px' }}
-        ></div>
-        <button
-          onClick={() =>
-            dispatch(setValue({ key: 'testVisibility', value: true }))
-          }
-        >
-          testVisibility
         </button>
       </div>
     </div>

@@ -1,0 +1,119 @@
+.control-bar-wrap {
+  width: 100%;
+  min-width: 660px;
+  height: 50px;
+  background: #ffffff;
+  z-index: 999;
+  box-shadow: 0px 2px 30px 0px rgba(30, 33, 36, 0.06);
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  .line {
+    width: 1px;
+    height: 18px;
+    margin: 0 4px;
+    background: #dcdcdc;
+  }
+  .control-left {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    // width: 680px;
+    .lottery-btn {
+      .lottery {
+        width: 24px;
+        height: 24px;
+        margin-top: -5px !important;
+      }
+      span {
+        color: #ff6f27;
+      }
+    }
+  }
+  .control-right {
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
+    .system-info {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      .network-progress,
+      .network-rtt {
+        margin: 0 15px 0 0;
+      }
+      .network-rtt {
+        font-size: 15px;
+        color: #454545;
+        line-height: 25px;
+        .warning {
+          color: #ea7568;
+        }
+      }
+    }
+  }
+  .bar-logo {
+    height: 24px;
+    margin: 0 20px 0 30px;
+  }
+  .anticon {
+    font-size: 20px;
+    height: 20px;
+    &.anticon-caret-up {
+      font-size: 12px;
+      margin: 0 20px 0 0;
+    }
+    .imgicon {
+      margin: 0 3px;
+    }
+    .imgicon.sanjiao {
+      margin-right: 5px;
+    }
+    .test,
+    .exit,
+    .kejian,
+    .desktop,
+    .xiake,
+    .sharescreen,
+    .answer,
+    .answerclick {
+      margin-top: -5px;
+    }
+  }
+  .ant-btn {
+    &.active {
+      color: red;
+    }
+    &.stopClass {
+      color: #f4742a;
+    }
+  }
+}
+.control-device-list {
+  .device-list-title {
+    box-sizing: border-box;
+    padding: 0 7px;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  .device {
+    display: block;
+    padding-left: 29px;
+    background-image: url('https://feed.youshu.cc/readwith/media/0/1695711843201.png');
+    background-position: 7px center;
+    background-repeat: no-repeat;
+    background-size: 16px 16px;
+    cursor: pointer;
+    &.active {
+      // color: #FF6F27;
+      background-image: url('https://feed.youshu.cc/readwith/media/0/1695711934128.png');
+    }
+  }
+}
+.active-color {
+  color: #ff6f27;
+  &:hover {
+    color: #ff6f27;
+  }
+}

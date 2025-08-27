@@ -1,0 +1,168 @@
+.user-list-box {
+  height: 100%;
+  max-height: 100%;
+  overflow: hidden;
+}
+.openVideoCall {
+  display: flex;
+  align-items: center;
+  // height: 40px;
+  padding: 20px 0 10px 0;
+  p {
+    margin-bottom: 0;
+    margin-right: 6px;
+    color: #7d7676;
+    font-family: PingFang SC;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+  }
+  img {
+    width: 28px;
+    height: 16px;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+}
+.videoCallUserList {
+  overflow-y: scroll;
+  .user-item {
+    &:first-child {
+      margin-top: -10px;
+    }
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .user-left {
+      .avatar-box {
+        width: 36px;
+        height: 36px;
+        margin-right: 12px;
+        flex-shrink: 0;
+        position: relative;
+        .avatar {
+          display: block;
+          width: 36px;
+          height: 36px;
+          border-radius: 18px;
+        }
+        .connect-type {
+          display: block;
+          width: 14px;
+          height: 14px;
+          position: absolute;
+          right: 0;
+          bottom: 0;
+        }
+      }
+    }
+    .user-main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 0;
+      border-bottom: 1px solid #ececec;
+      .middle-box {
+        flex: 1;
+        .nick-box {
+          display: flex;
+          align-items: center;
+          margin-bottom: 4px;
+          .nick {
+            color: #151515;
+            font-family: PingFang SC;
+            font-size: 14px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 20px;
+            margin-right: 4px;
+          }
+          .level {
+            height: 12px;
+            padding: 0 2px;
+            color: #fff;
+            font-family: PingFang SC;
+            font-size: 9px;
+            font-style: normal;
+            font-weight: 500;
+            line-height: 12px;
+            border-radius: 3px;
+            background: #383838;
+            margin-right: 4px;
+          }
+          .conversion {
+            height: 16px;
+            padding: 0 2px;
+            color: #7d7676;
+            font-family: PingFang SC;
+            font-size: 10px;
+            font-style: normal;
+            font-weight: 500;
+            line-height: 16px;
+            border-radius: 3px;
+            background: #f2f2f2;
+            &.active {
+              color: #ff6f27;
+              background: #fff1e9;
+            }
+          }
+        }
+        .time-label {
+          color: #7d7676;
+          font-family: PingFang SC;
+          font-size: 12px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: 17px;
+        }
+      }
+      .user-right {
+        .btn {
+          display: block;
+          width: 56px;
+          height: 24px;
+          border: none;
+          flex-shrink: 0;
+          border-radius: 22px;
+          color: #fff;
+          font-size: 12px;
+          line-height: 24px;
+          text-align: center;
+          cursor: pointer;
+          &.close {
+            background: #ff594d;
+          }
+          &.agree {
+            background: #2baf6a;
+          }
+        }
+      }
+    }
+  }
+  .no-data {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    padding-bottom: 150px;
+    img {
+      display: block;
+      width: 188px;
+      height: 140px;
+      margin-bottom: 10px;
+    }
+    p {
+      color: #666;
+      text-align: center;
+      font-family: PingFang SC;
+      font-size: 12px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+    }
+  }
+}

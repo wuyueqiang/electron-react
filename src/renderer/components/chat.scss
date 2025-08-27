@@ -1,0 +1,632 @@
+.chat-message-container {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  .ant-alert {
+    margin-bottom: 10px;
+    &.link {
+      cursor: pointer;
+    }
+  }
+  .nav {
+    height: 56px;
+    display: flex;
+    align-items: center;
+    background-color: #f7f7f7;
+
+    .nav-item {
+      flex: 1;
+      color: #808080;
+      text-align: center;
+      font-family: PingFang SC;
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 56px;
+      position: relative;
+      cursor: pointer;
+      margin-bottom: 0;
+      &.active {
+        color: #151515;
+        background-color: #ffffff;
+      }
+      .red {
+        position: absolute;
+        right: 40px;
+        top: 15px;
+        display: block;
+        width: 8px;
+        height: 8px;
+        border-radius: 4px;
+        background: linear-gradient(270deg, #ff3636 0%, #ff7777 100%);
+        border: 1px solid #ffffff;
+      }
+    }
+  }
+  .nav-container {
+    flex: 1;
+    padding: 20px;
+    &.nav-container-userlist {
+      padding: 0 24px 0 24px;
+    }
+    p {
+      margin-bottom: 0;
+    }
+  }
+  .chat-message-content {
+    height: calc(100% - 100px);
+    // padding-top: 60px;
+    box-sizing: border-box;
+    position: relative;
+    -moz-user-select: text; /*火狐*/
+    -webkit-user-select: text; /*webkit浏览器*/
+    -ms-user-select: text; /*IE10*/
+    -khtml-user-select: text; /*早期浏览器*/
+    user-select: text;
+    .chat-message-title {
+      font-size: 20px;
+      color: #151515;
+      font-weight: 500;
+      line-height: 33px;
+      padding: 10px 0;
+      position: absolute;
+      left: 0;
+      top: 0;
+      .title-line {
+        width: 20px;
+        height: 4px;
+        background: #151515;
+        position: absolute;
+        left: 0;
+        bottom: 0;
+      }
+      .title-online-num {
+        font-size: 16px;
+        font-weight: 400;
+      }
+    }
+    .paddingTop {
+      padding-top: 44px;
+    }
+    .chat-message-list {
+      &::-webkit-scrollbar {
+        display: none;
+      }
+      // height: 100%;
+      box-sizing: border-box;
+      overflow-y: auto;
+      .message {
+        flex-shrink: 0;
+        margin-top: 10px;
+        &.sent {
+          display: flex;
+          justify-content: flex-start;
+          flex-direction: row-reverse;
+          .avatar {
+            margin-left: 8px;
+          }
+          .content {
+            text-align: end;
+            .nickname {
+              justify-content: flex-end;
+              .role {
+              }
+            }
+            .info {
+              background: #ffe7d2;
+              border-radius: 14px 2px 14px 14px;
+            }
+          }
+          .info-more {
+            left: -30px;
+          }
+        }
+        &.receive {
+          display: flex;
+          justify-content: flex-start;
+          .avatar {
+            margin-right: 8px;
+            cursor: pointer;
+          }
+          .info-more {
+            right: -30px;
+          }
+        }
+        .avatar {
+          width: 30px;
+          height: 30px;
+          border: 1px solid rgba(236, 236, 236, 1);
+          border-radius: 16px;
+          overflow: hidden;
+          img {
+            width: 100%;
+            height: 100%;
+          }
+        }
+        .content {
+          .nickname {
+            font-size: 16px;
+            color: #a6a6a6;
+            line-height: 22px;
+            font-weight: 400;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            flex-wrap: wrap;
+            .nick {
+              margin-bottom: 5px;
+            }
+            .level {
+              display: inline-block;
+              width: 32px;
+              height: 16px;
+              background-repeat: no-repeat;
+              background-size: 100% 100%;
+              margin-right: 5px;
+              margin-bottom: 5px;
+              &.level-S {
+                background-image: url('http://feed.youshu.cc/readwith/media/picture/61c9301186738.png');
+              }
+              &.level-A {
+                background-image: url('http://feed.youshu.cc/readwith/media/picture/61c9300e543ae.png');
+              }
+              &.level-B {
+                background-image: url('http://feed.youshu.cc/readwith/media/picture/61c9300f78820.png');
+              }
+              &.level-C {
+                background-image: url('http://feed.youshu.cc/readwith/media/picture/61c930108f8ac.png');
+              }
+            }
+
+            .role {
+              background: linear-gradient(
+                270deg,
+                rgba(255, 54, 54, 1) 0%,
+                rgba(255, 119, 119, 1) 100%
+              );
+              border-radius: 4px;
+              font-size: 12px;
+              padding: 2px 4px;
+              line-height: 1;
+              margin-left: 5px;
+              font-style: normal;
+              color: #ffffff;
+              margin-bottom: 5px;
+              &.student {
+                background: linear-gradient(
+                  270deg,
+                  rgba(252, 111, 0, 1) 0%,
+                  rgba(255, 150, 26, 1) 100%
+                );
+              }
+              &.monitor {
+                background: linear-gradient(270deg, #32c49b, #65dcb9);
+              }
+            }
+            .command-label {
+              border-radius: 4px;
+              font-size: 12px;
+              font-family:
+                PingFang SC-Regular,
+                PingFang SC;
+              padding: 0px 3px;
+              margin-left: 5px;
+              line-height: 16px;
+              margin-bottom: 5px;
+              img {
+                margin-right: 2px;
+                margin-bottom: 1px;
+                width: 10px;
+              }
+            }
+          }
+          .info {
+            display: inline-block;
+            max-width: 266px;
+            padding: 6px 8px;
+            border-radius: 2px 14px 14px 14px;
+            white-space: pre-wrap;
+            word-break: break-all;
+            // overflow: hidden;
+            line-height: 20px;
+            background-color: #f6f7fa;
+            font-size: 14px;
+            color: #272727;
+            margin-top: 5px;
+            box-sizing: border-box;
+            position: relative;
+            > p {
+              margin: 0;
+              .call-nick {
+                color: #ff6f27;
+              }
+            }
+            > img {
+              width: 100%;
+              // max-height: 150px;
+            }
+            > .imgbox > img {
+              width: 100%;
+              // max-height: 150px;
+            }
+            .info-more {
+              position: absolute;
+              // display: block;
+              width: 24px;
+              height: 19px;
+              bottom: 0;
+              cursor: pointer;
+            }
+          }
+          .reply-info {
+            display: inline-block;
+            max-width: 266px;
+            padding: 4px 6px;
+            border-radius: 10px;
+            overflow:  hidden;
+            margin-top: 3px;
+            box-sizing: border-box;
+            background-color: #f6f7fa;
+            p {
+              display: block !important;
+              margin: 0;
+              white-space: pre-wrap;
+              word-break: break-all;
+              line-height: 16px;
+              font-size: 12px;
+              color: #a5a5a5;
+              height: 16px;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            }
+          }
+        }
+      }
+    }
+
+    .top-msg-place {
+      // height: 44px;
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      width: 100%;
+      background-color: #fff;
+      padding-top: 10px;
+      z-index: 1;
+      .ant-alert {
+        margin-bottom: 0;
+      }
+      .top-msg-title {
+        // position: absolute;
+        // left: 0;
+        // top: 0;
+        width: 100%;
+        height: 44px;
+        border: 1px solid #ececec;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        border-radius: 5px;
+        background-color: #f7f7f7;
+        padding: 0 10px;
+        p {
+          margin: 0;
+        }
+        .top-num {
+          width: 34px;
+          height: 20px;
+          background: #5488f4;
+          border-radius: 3px 3px 0px 3px;
+          text-align: center;
+          line-height: 20px;
+          font-size: 12px;
+          font-family:
+            PingFangSC-Regular,
+            PingFang SC;
+          font-weight: 400;
+          color: #ffffff;
+          position: relative;
+          span {
+            display: block;
+            width: 26px;
+            height: 26px;
+            border-radius: 14px;
+            line-height: 26px;
+            font-size: 20px;
+            text-align: center;
+            background: linear-gradient(270deg, #fc6f00 0%, #ff961a 100%);
+            border: 1px solid #ffffff;
+            font-family:
+              PingFangSC-Regular,
+              PingFang SC;
+            font-weight: 400;
+            color: #ffffff;
+            position: absolute;
+            right: -14px;
+            top: -14px;
+            transform: scale(0.55, 0.55);
+          }
+        }
+        .top-title {
+          flex: 1;
+          margin: 0 10px;
+          height: 20px;
+          font-size: 14px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          color: #151515;
+        }
+        .top-right {
+          width: 30px;
+          height: 20px;
+          font-size: 14px;
+          line-height: 20px;
+          text-align: center;
+          cursor: pointer;
+        }
+      }
+
+      .top-msg-list {
+        // position: absolute;
+        // left: 0;
+        // top: 0;
+        width: 100%;
+        border: 1px solid #ececec;
+        box-sizing: border-box;
+        border-radius: 5px;
+        background-color: #f7f7f7;
+        padding: 5px 5px;
+        p {
+          margin: 0;
+        }
+        .top-msg-item {
+          width: 100%;
+          box-sizing: border-box;
+          padding: 5px;
+          .item-top {
+            display: flex;
+            align-items: center;
+            .top-left {
+              flex: 1;
+              display: flex;
+              align-items: center;
+              .top-num {
+                width: 34px;
+                height: 20px;
+                background: #5488f4;
+                border-radius: 3px 3px 0px 3px;
+                text-align: center;
+                line-height: 20px;
+                font-size: 12px;
+                font-family:
+                  PingFangSC-Regular,
+                  PingFang SC;
+                font-weight: 400;
+                color: #ffffff;
+                margin-right: 5px;
+              }
+              .name {
+                color: #808080;
+                font-size: 14px;
+              }
+              .role {
+                border-radius: 4px;
+                font-size: 12px;
+                padding: 2px 4px;
+                line-height: 1;
+                margin-left: 5px;
+                font-style: normal;
+                color: #ffffff;
+                &.admin {
+                  background: linear-gradient(
+                    270deg,
+                    rgba(252, 111, 0, 1) 0%,
+                    rgba(255, 150, 26, 1) 100%
+                  );
+                }
+                &.teacher {
+                  background: linear-gradient(
+                    270deg,
+                    rgba(255, 54, 54, 1) 0%,
+                    rgba(255, 119, 119, 1) 100%
+                  );
+                }
+                &.monitor {
+                  background: linear-gradient(270deg, #32c49b, #65dcb9);
+                }
+              }
+            }
+            .top-right {
+              cursor: pointer;
+            }
+          }
+          .item-main {
+            margin: 5px 0;
+            background-color: #fff;
+            padding: 5px;
+            border-radius: 5px;
+            max-height: 66px;
+            line-height: 22px;
+            overflow-y: scroll;
+            word-wrap: break-word;
+          }
+        }
+      }
+    }
+  }
+  .chat-message-control {
+    color: #151515;
+    background: #ffffff;
+    position: relative;
+    .input-reply {
+      position: absolute;
+      left: 0;
+      top: -40px;
+      width: 100%;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 13px;
+      background: #f5f5f5;
+      border-radius: 8px;
+      p {
+        flex: 1;
+        width: 0;
+        color: #cacaca;
+        font-size: 13px;
+        font-family: PingFangTC-Regular, PingFangTC;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        margin: 0 20px 0 0;
+        overflow: hidden;
+      }
+      .close-reply {
+        display: block;
+        width: 14px;
+        height: 14px;
+        cursor: pointer;
+        img {
+          display: block;
+          width: 100%;
+          height: 100%;
+        }
+      }
+    }
+    .chat-message-btns {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+      .chat-btn-left {
+        display: flex;
+        align-items: center;
+        .chat-upload {
+          .chat-img-btn {
+            color: #151515;
+            font-size: 26px;
+            cursor: pointer;
+            .uploadpic {
+              vertical-align: middle;
+              margin-top: -5px;
+            }
+          }
+        }
+        .chat-mute-all {
+          margin-left: 20px;
+        }
+      }
+      .chat-button {
+        width: 90px;
+        height: 36px;
+        background: #eaeaea;
+        color: #a8a8a8;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 1;
+        padding: 10px 0;
+        text-align: center;
+        border-radius: 19px;
+        border: 1px solid rgba(234, 234, 234, 1);
+        outline: none;
+        &.active {
+          background: green;
+          color: #ffffff;
+        }
+      }
+    }
+    .chat-input {
+      background: rgba(247, 247, 247, 1);
+      border-radius: 14px;
+      border: 1px solid rgba(232, 232, 232, 1);
+      &:focus {
+        background: #f8fffb;
+        border: 1px solid #2baf6a;
+      }
+    }
+  }
+}
+.behave {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  .ok-btn {
+    display: block;
+    width: 58px;
+    height: 23px;
+    background: rgba(43, 175, 106, 0.05);
+    border-radius: 16px;
+    border: 1px solid #2baf6a;
+    font-size: 12px;
+    font-family:
+      PingFangSC-Medium,
+      PingFang SC;
+    font-weight: 500;
+    color: #2baf6a;
+    margin-right: 7px;
+    text-align: center;
+    line-height: 21px;
+    cursor: pointer;
+  }
+  .reply-btn {
+    display: block;
+    width: 58px;
+    height: 23px;
+    background: #2baf6a;
+    border-radius: 16px;
+    border: 1px solid #2baf6a;
+    font-size: 12px;
+    font-family: PingFangTC-Semibold, PingFangTC;
+    font-weight: 600;
+    color: #ffffff;
+    text-align: center;
+    line-height: 21px;
+    cursor: pointer;
+  }
+}
+.action-box {
+  display: flex;
+  .action-item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    // width: 60px;
+    padding: 0 5px;
+    cursor: pointer;
+    img {
+      display: block;
+      width: 19px;
+      height: 19px;
+      margin-bottom: 2px;
+    }
+    p {
+      text-align: center;
+      font-size: 10px;
+      font-family:
+        PingFangSC-Regular,
+        PingFang SC;
+      font-weight: 400;
+      color: #eeefee;
+      line-height: 12px;
+      margin: 0;
+    }
+    &::after {
+      content: '';
+      display: block;
+      border-right: 1px solid #5b5b5b;
+      width: 0;
+      height: 17px;
+      position: absolute;
+      right: 0;
+      top: 7px;
+    }
+  }
+  .action-item:last-child {
+    &::after {
+      display: none;
+    }
+  }
+}
