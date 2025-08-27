@@ -4,7 +4,7 @@ import { ipcRenderer, IpcRendererEvent, shell } from 'electron';
 // 在window上添加ipcRenderer
 // (window as any).electron.ipcRenderer = ipcRenderer
 
-export type Channels = 'ipc-example' | 'get-device-id' | 'uploadLog' | 'getLogUrl' | 'setLogger' | 'enterRoom' | 'app-close' | 'exit' | 'startLivePush' | 'getAssetPath' | 'getOsVersion' | 'getCPUUsage' | 'stopLivePush';
+export type Channels = 'ipc-example' | 'get-device-id' | 'uploadLog' | 'getLogUrl' | 'setLogger' | 'enterRoom' | 'app-close' | 'exit' | 'startLivePush' | 'getAssetPath' | 'getOsVersion' | 'getCPUUsage' | 'stopLivePush' | 'leaveRoom';
 
 const electronHandler = {
   ipcRenderer: {
@@ -22,6 +22,9 @@ const electronHandler = {
     },
     once(channel: Channels, func: (...args: unknown[]) => void) {
       ipcRenderer.once(channel, (_event, ...args) => func(...args));
+    },
+    off(channel: Channels, func: (...args: unknown[]) => void) {
+      ipcRenderer.removeListener(channel, func);
     },
   },
   // 获取设备 ID

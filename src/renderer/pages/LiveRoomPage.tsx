@@ -59,7 +59,8 @@ import ScreenList from '../components/ScreenList';
 import Answer from '../components/Answer';
 import LotteryActivity from '../components/lottery/LotteryActivity';
 import LotteryWinnerList from '../components/lottery/LotteryWinnerList';
-import VideoSetting from "../components/VideoSetting"
+import VideoSetting from '../components/VideoSetting';
+import ImgIcon from '../components/ImgIcon';
 
 import { handleDeviceChange } from '../utils/deviceChangeHandler';
 
@@ -77,6 +78,7 @@ function LiveRoomPage() {
   const cameraPositionRef: any = useRef(CameraPositions[1]);
   const [currentBeautyStyle, setCurrentBeautyStyle] = useState(BeautyStyles[0]);
   const [isShowOutModal, setIsShowOutModal] = useState(false);
+  const videoCallUserListRef = useRef<Array<VideoCallUserParams>>([]);
   const [showLoadingVisibility, setShowLoadingVisibility] = useState(false);
   const [lotteryTask, setLotteryTask] = useState({
     draw_interval: 0,
@@ -109,6 +111,8 @@ function LiveRoomPage() {
     deviceStatus,
     liveBGM,
     liveStage,
+    currentScreen,
+    videoCallUserList,
   } = roomConfig;
   const routeParams = useSelector(selectRouteParams);
 
@@ -124,10 +128,35 @@ function LiveRoomPage() {
 
   function onError(result: any) {
     console.log('onError', result);
+  //   dispatch(setLog(LIVE_ACTIONS.Error, {
+  //     ...result
+  // }))
   }
 
   function onStartLivePush(result: any) {
     console.log('onStartLivePush', result);
+  }
+
+  // SDK 跟服务器的连接断开
+  function onConnectionLost(result: any) {
+    // console.log('SDK 跟服务器的连接断开----', result)
+    notification.error({
+      message: '警告',
+      description: '直播间与服务器连接断开，请检查您的网络！',
+    });
+    // dispatch(setLog(LIVE_ACTIONS.ConnectionLost));
+  }
+
+  // SDK 尝试重新连接到服务器
+  function onTryToReconnect(result: any) {
+    // console.log('SDK 尝试重新连接到服务器----', result)
+    // dispatch(setLog(LIVE_ACTIONS.TryToReconnect));
+  }
+
+  // SDK 跟服务器的连接恢复
+  function onConnectionRecovery(result: any) {
+    // console.log('SDK 跟服务器的连接恢复----', result)
+    // dispatch(setLog(LIVE_ACTIONS.ConnectionRecovery));
   }
 
   // 监听TIM 加入群组结果
@@ -150,7 +179,7 @@ function LiveRoomPage() {
   }
   // 监听外接设备的插拔
   function onDeviceChange(result: any) {
-    console.log('onDeviceChange-------------', result);
+    // console.log('onDeviceChange-------------', result);
 
     // 使用工具函数处理设备变更
     handleDeviceChange(result, ysLiveClient, dispatch);
@@ -167,6 +196,88 @@ function LiveRoomPage() {
     }
   }
 
+  // 收到抽奖相关im消息
+  function onLotteryReceived(item: { data: any; eventCode: string }) {
+    let data = item.data;
+    console.log('onLotteryReceived', data);
+    switch (data.action) {
+      case 'liveLotteryTaskStart':
+        // 发起抽奖im
+        let lottery_task = JSON.parse(data.quote);
+        setLotteryTask(lottery_task);
+        dispatch(setValue({ key: 'isLotterying', value: true }));
+        break;
+      case 'liveLotteryTaskPushWinnerResult':
+        // 抽奖结果im
+        dispatch(setValue({ key: 'isLotterying', value: false }));
+        setLotteryTask({
+          draw_interval: 0,
+          is_join_lottery: false,
+          lottery_task_id: 0,
+          prize_img: '',
+        });
+        let result = JSON.parse(data.quote);
+        console.log('抽奖结果', result);
+        dispatch(setList({ name: 'lotteryWinner', list: result.winner_user_list }));
+        dispatch(setValue({ key: 'showLotteryWinnerList', value: true }));
+        break;
+      case 'liveLotteryTaskEnd':
+        // 取消抽奖im
+        dispatch(setValue({ key: 'isLotterying', value: false }));
+        setLotteryTask({
+          draw_interval: 0,
+          is_join_lottery: false,
+          lottery_task_id: 0,
+          prize_img: '',
+        });
+        break;
+      default:
+        break;
+    }
+  }
+
+  // 屏幕分享开始
+  function onScreenCaptureStarted() {
+    let resolutions: any = CameraStreamEncoderParams.filter((item: any) => {
+      let label = 'CR' + item.label;
+      return ['CR360P'].some((i: any) => i == label);
+    });
+    setAvailableCameraResolution(resolutions);
+    // dispatch(setOperateLog(OPERATE_ACTION.screen_share, {
+    //     share_switch: true,
+    //     success_status: 1,
+    //     select_screen: refCurrentScreen.current,
+    //     screen_list: refScreenList.current
+    // }))
+  }
+
+  // 屏幕分享结束
+  function onScreenCaptureStopped(result: any) {
+    // 重置摄像头清晰度
+    let resolutions: any = CameraStreamEncoderParams.filter((item: any) => {
+      let label = 'CR' + item.label;
+      return ['CR540P', 'CR720P'].some((i: any) => i == label);
+    });
+    setAvailableCameraResolution(resolutions);
+    // 意外结束
+    if (result.data != 0) {
+      ysLiveClient.stopScreenCapture();
+      ysLiveClient.stopSystemAudioLoopback();
+      dispatch(setValue({ key: 'isShareScreen', value: false }));
+      dispatch(updateMixLiveAction() as any);
+      notification.warning({
+        message: '屏幕共享结束',
+        description: '由于共享窗口被关闭，屏幕共享结束',
+      });
+    }
+    // dispatch(setOperateLog(OPERATE_ACTION.screen_share, {
+    //     share_switch: false,
+    //     success_status: 1,
+    //     select_screen: refCurrentScreen.current,
+    //     screen_list: refScreenList.current
+    // }))
+  }
+
   function quitApp() {
     window.electron?.ipcRenderer.sendMessage('exit');
   }
@@ -176,18 +287,26 @@ function LiveRoomPage() {
     ysLiveClient.on(ysLiveClient.EVENT.ERROR, onError);
     ysLiveClient.on(ysLiveClient.EVENT.START_LIVE_PUSH, onStartLivePush);
     ysLiveClient.on(ysLiveClient.EVENT.TRTC_DEVICE_CHANGE, onDeviceChange);
-    // // ysLiveClient.on(ysLiveClient.EVENT.TRTC_SCREEN_CAPTURE_COVERED, onScreenCaptureCovered)
-    // ysLiveClient.on(ysLiveClient.EVENT.TRTC_SCREEN_CAPTURE_STARTED, onScreenCaptureStarted)
-    // ysLiveClient.on(ysLiveClient.EVENT.TRTC_SCREEN_CAPTURE_STOPPED, onScreenCaptureStopped)
-    // ysLiveClient.on(ysLiveClient.EVENT.TRTC_CONNECTION_LOST, onConnectionLost)
-    // ysLiveClient.on(ysLiveClient.EVENT.TRTC_TRY_TO_RECONNECT, onTryToReconnect)
-    // ysLiveClient.on(ysLiveClient.EVENT.TRTC_CONNECTION_RECOVERY, onConnectionRecovery)
+    ysLiveClient.on(
+      ysLiveClient.EVENT.TRTC_SCREEN_CAPTURE_STARTED,
+      onScreenCaptureStarted,
+    );
+    ysLiveClient.on(
+      ysLiveClient.EVENT.TRTC_SCREEN_CAPTURE_STOPPED,
+      onScreenCaptureStopped,
+    );
+    ysLiveClient.on(ysLiveClient.EVENT.TRTC_CONNECTION_LOST, onConnectionLost);
+    ysLiveClient.on(ysLiveClient.EVENT.TRTC_TRY_TO_RECONNECT, onTryToReconnect);
+    ysLiveClient.on(
+      ysLiveClient.EVENT.TRTC_CONNECTION_RECOVERY,
+      onConnectionRecovery,
+    );
     ysLiveClient.on(ysLiveClient.EVENT.TIM_JOIN_GROUP, onTimJoinGroup);
     ysLiveClient.on(
       ysLiveClient.EVENT.TIM_TEACHER_ENTER_RECEIVED,
       onMessageReceived,
     );
-    // ysLiveClient.on(ysLiveClient.EVENT.LOTTERY_MSG_RECEIVED, onLotteryReceived);
+    ysLiveClient.on(ysLiveClient.EVENT.LOTTERY_MSG_RECEIVED, onLotteryReceived);
   }
 
   // 取消订阅
@@ -196,17 +315,31 @@ function LiveRoomPage() {
     ysLiveClient.off(ysLiveClient.EVENT.START_LIVE_PUSH, onStartLivePush);
     ysLiveClient.off(ysLiveClient.EVENT.TRTC_DEVICE_CHANGE, onDeviceChange);
     ysLiveClient.off(ysLiveClient.EVENT.TIM_JOIN_GROUP, onTimJoinGroup);
-    // // ysLiveClient.off(ysLiveClient.EVENT.TRTC_SCREEN_CAPTURE_COVERED, onScreenCaptureCovered)
-    // ysLiveClient.off(ysLiveClient.EVENT.TRTC_SCREEN_CAPTURE_STARTED, onScreenCaptureStarted)
-    // ysLiveClient.off(ysLiveClient.EVENT.TRTC_SCREEN_CAPTURE_STOPPED, onScreenCaptureStopped)
-    // ysLiveClient.off(ysLiveClient.EVENT.TRTC_CONNECTION_LOST, onConnectionLost)
-    // ysLiveClient.off(ysLiveClient.EVENT.TRTC_TRY_TO_RECONNECT, onTryToReconnect)
-    // ysLiveClient.off(ysLiveClient.EVENT.TRTC_CONNECTION_RECOVERY, onConnectionRecovery)
+    ysLiveClient.off(
+      ysLiveClient.EVENT.TRTC_SCREEN_CAPTURE_STARTED,
+      onScreenCaptureStarted,
+    );
+    ysLiveClient.off(
+      ysLiveClient.EVENT.TRTC_SCREEN_CAPTURE_STOPPED,
+      onScreenCaptureStopped,
+    );
+    ysLiveClient.off(ysLiveClient.EVENT.TRTC_CONNECTION_LOST, onConnectionLost);
+    ysLiveClient.off(
+      ysLiveClient.EVENT.TRTC_TRY_TO_RECONNECT,
+      onTryToReconnect,
+    );
+    ysLiveClient.off(
+      ysLiveClient.EVENT.TRTC_CONNECTION_RECOVERY,
+      onConnectionRecovery,
+    );
     ysLiveClient.off(
       ysLiveClient.EVENT.TIM_TEACHER_ENTER_RECEIVED,
       onMessageReceived,
     );
-    // ysLiveClient.off(ysLiveClient.EVENT.LOTTERY_MSG_RECEIVED, onLotteryReceived);
+    ysLiveClient.off(
+      ysLiveClient.EVENT.LOTTERY_MSG_RECEIVED,
+      onLotteryReceived,
+    );
   }
 
   // 进入房间
@@ -314,24 +447,20 @@ function LiveRoomPage() {
       // dispatch(setLog(LIVE_ACTIONS.anchorExitRoom));
       ysLiveClient.exitRoom();
       if (!roomInfo.room_id) {
-        // _exitRoom()
         liveRoom(type);
         return;
       }
       TeacherQuitRoom(roomInfo.room_id)
         .then((res) => {
           if (res.status.code == 200) {
-            // _exitRoom()
             liveRoom(type);
           } else {
             message.error(`${res.status.code}-${res.status.msg}`);
-            // _exitRoom()
             liveRoom(type);
           }
         })
         .catch((error) => {
           console.warn(error);
-          // _exitRoom()
           liveRoom(type);
         });
     } else {
@@ -561,14 +690,57 @@ function LiveRoomPage() {
     setShowVideoSettingVisibility(val);
   }
 
+  // 上报老师设备应用信息
+  function uploadTeacherAPPDevice(roomId: number) {
+    window.electron?.ipcRenderer.once('getOsVersion', (res: any) => {
+      let osVersion = res;
+      let cameraParam = {
+        room_id: roomId,
+        av_device_type: 3,
+        device: JSON.stringify({
+          osVersion,
+          clientVersion: VERSION,
+        }),
+      };
+      console.log(cameraParam, 'cameraParam');
+      SaveTeacherAvDevice(cameraParam)
+        .then((res) => {
+          if (res.status.code != 200) {
+            console.warn(res);
+          }
+        })
+        .catch((error) => {
+          console.warn(error);
+        });
+    });
+    window.electron?.ipcRenderer.sendMessage('getOsVersion');
+  }
+
+  function getPositionIcon(position: any, active: string = '') {
+    switch (position.icon) {
+      case 'leftTop':
+        return active ? <ImgIcon.WhiteLeftTop /> : <ImgIcon.LeftTop />;
+        break;
+      case 'leftBottom':
+        return active ? <ImgIcon.WhiteLeftBottom /> : <ImgIcon.LeftBottom />;
+        break;
+      case 'rightTop':
+        return active ? <ImgIcon.WhiteRightTop /> : <ImgIcon.RightTop />;
+        break;
+      case 'rightBottom':
+        return active ? <ImgIcon.WhiteRightBottom /> : <ImgIcon.RightBottom />;
+        break;
+      default:
+        return null;
+        break;
+    }
+  }
   useEffect(() => {
     isStartRef.current = isStart;
     return () => {};
   }, [isStart]);
 
   useEffect(() => {
-    console.log('roomId', roomId);
-    console.log('userInfo', userInfo);
     if (!roomId) {
       navigate('/login');
       return;
@@ -683,6 +855,7 @@ function LiveRoomPage() {
       });
 
     // 上报老师设备信息
+    uploadTeacherAPPDevice(Number(roomId));
     window.electron?.ipcRenderer.sendMessage('enterRoom', userInfo['userId']);
     window.electron?.ipcRenderer.on('app-close', onCloseWindow);
 
@@ -690,8 +863,34 @@ function LiveRoomPage() {
       console.log('unmount');
       unBindEvent();
       ysLiveClient = null;
+      window.electron?.ipcRenderer.sendMessage('leaveRoom');
+      window.electron?.ipcRenderer.off('app-close', onCloseWindow);
     };
   }, []);
+
+  useEffect(() => {
+    cameraPositionRef.current = cameraPosition;
+  }, [cameraPosition]);
+
+  useEffect(() => {
+    videoCallUserListRef.current = videoCallUserList;
+  }, [videoCallUserList]);
+
+  useEffect(() => {
+    refCurrentScreen.current = {
+      type: currentScreen.type,
+      sourceId: currentScreen.sourceId,
+      sourceName: currentScreen.sourceName,
+    };
+    refScreenList.current = screenList.map((item: any) => {
+      return {
+        type: item.type,
+        sourceId: item.sourceId,
+        sourceName: item.sourceName,
+      };
+    });
+    return () => {};
+  }, [currentScreen, screenList]);
 
   return (
     <div>
@@ -751,12 +950,17 @@ function LiveRoomPage() {
       ) : null}
 
       {/* 抽奖中奖用户弹窗 */}
-      {ysLiveClient ? (
-        <LotteryWinnerList></LotteryWinnerList>
-      ) : null}
+      {ysLiveClient ? <LotteryWinnerList></LotteryWinnerList> : null}
 
       {/* 摄像头设置弹窗 */}
-      {showVideoSettingVisibility ? <VideoSetting ysLiveClient={ysLiveClient} setMirror={setMirror} setShowVideoSetting={setShowVideoSetting} setCameraPosition={setCameraPosition}></VideoSetting> : null}
+      {showVideoSettingVisibility ? (
+        <VideoSetting
+          ysLiveClient={ysLiveClient}
+          setMirror={setMirror}
+          setShowVideoSetting={setShowVideoSetting}
+          setCameraPosition={setCameraPosition}
+        ></VideoSetting>
+      ) : null}
 
       <div className="room-wrap" id="room-wrap">
         <div className="roomRow">

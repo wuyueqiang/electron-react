@@ -5,7 +5,7 @@ import { setLog, setDevice } from '../reducers/roomConfigSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectRoomConfig } from '../reducers/index';
 
-import '../css/videoSetting.scss';
+import './videoSetting.scss';
 interface VideoSettingParams {
     ysLiveClient: any,
     setMirror: any,
