@@ -1,26 +1,18 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-  Rect,
-  TRTCDeviceType,
-  TRTCDeviceState,
-  TRTCVideoStreamType,
   TRTCVideoResolutionMode,
 } from 'trtc-electron-sdk/liteav/trtc_define';
 import {
   LIVE_STAGE,
   CameraStreamEncoderParams,
   StreamEncoderParams,
-  BoardStreamEncoderParams,
   CameraPositions,
   BeautyStyles,
-  OPERATE_ACTION,
   VideoCallUserParams,
-  LIVE_ACTIONS,
 } from '../vars/room-vars';
-import os from 'os';
-// import { execSync } from 'child_process'
+import { useNetworkState  } from 'react-use';
 import { VERSION } from '../config/index';
 import { Modal, message, notification, Button } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
@@ -30,11 +22,7 @@ import { selectRoomConfig, selectRouteParams } from '../reducers/index';
 import {
   setValue,
   setList,
-  setDevice,
-  setLog,
-  toggleCamera,
-  toggleMic,
-  setVisibility,
+  setDevice
 } from '../reducers/roomConfigSlice';
 import { initYsLiveClient } from '../reducers/ysLiveClientSlice';
 import { LStorage } from '../utils/tools';
@@ -86,6 +74,7 @@ function LiveRoomPage() {
     lottery_task_id: 0,
     prize_img: '',
   });
+  const networkState = useNetworkState();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   let EVENT: any;
@@ -98,19 +87,10 @@ function LiveRoomPage() {
     isOpenCamera,
     screenVisibility,
     screenList,
-    cameraList,
-    micList,
-    speakerList,
     isMirror,
     isTested,
     testVisibility,
-    visibilityStatus,
-    liveStatus,
     cameraPosition,
-    isOpenMic,
-    deviceStatus,
-    liveBGM,
-    liveStage,
     currentScreen,
     videoCallUserList,
   } = roomConfig;
@@ -739,6 +719,22 @@ function LiveRoomPage() {
     isStartRef.current = isStart;
     return () => {};
   }, [isStart]);
+
+  useEffect(() => {
+    if (Object.keys(networkState).length <= 0) return;
+    if (networkState.online) {
+      notification.destroy('online');
+    } else {
+        const args = {
+            message: '提醒',
+            description:
+                '哎呀断网了，请检测您的网络...',
+            duration: 0,
+            key: 'online'
+        };
+        notification.open(args);
+    }
+  }, [networkState.online])
 
   useEffect(() => {
     if (!roomId) {

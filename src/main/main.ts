@@ -51,14 +51,14 @@ ipcMain.handle('get-device-id', async () => {
 
 // 处理日志上传
 ipcMain.on('uploadLog', (event) => {
-  try {
-    // 这里实现日志上传逻辑
-    // 上传成功后，发送结果到渲染进程
-    event.reply('getLogUrl', 'https://example.com/log/123456');
-  } catch (error) {
-    console.error('上传日志失败:', error);
-    event.reply('getLogUrl', null);
-  }
+  // try {
+  //   // 这里实现日志上传逻辑
+  //   // 上传成功后，发送结果到渲染进程
+  //   event.reply('getLogUrl', 'https://example.com/log/123456');
+  // } catch (error) {
+  //   console.error('上传日志失败:', error);
+  //   event.reply('getLogUrl', null);
+  // }
 });
 
 ipcMain.on('setLogger', (event, arg) => {

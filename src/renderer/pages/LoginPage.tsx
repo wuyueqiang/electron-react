@@ -3,7 +3,7 @@ import { Form, Input, message as Message, Modal, Button } from 'antd';
 import { connect } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import './LoginPage.scss';
-import { getUUID, LStorage } from '../utils/tools';
+import { LStorage } from '../utils/tools';
 // import Store from 'electron-store'
 
 
@@ -99,35 +99,6 @@ function LoginPage() {
     navigate('/redux-test');
   };
 
-  // useEffect(() => {
-  //   async function fetchDeviceId() {
-  //     if (!(LStorage.getItem('DEVICE_ID'))) {
-  //       try {
-  //         // 使用主进程提供的方法获取设备 ID
-  //         const deviceId = await window.electron.getDeviceId();
-  //         LStorage.setItem('DEVICE_ID', deviceId);
-  //       } catch (error) {
-  //         // 如果获取失败，则使用 UUID
-  //         LStorage.setItem('DEVICE_ID', getUUID());
-  //       }
-  //     }
-  //     const userInfo = (LStorage.getItem('USER_INFO')) || {};
-  //     LStorage.setItem('USER_INFO', {
-  //       ...userInfo,
-  //       liveToken: '',
-  //     });
-  //     curForm.current.setFieldsValue({
-  //       mobile: userInfo.mobile || '',
-  //       password: userInfo.password || '',
-  //     });
-  //   }
-  //   fetchDeviceId();
-
-  //   return () => {
-  //     // 清理工作
-  //   };
-  // }, []);
-
   const goToRoom = () => {
     navigate('/live-room/1755694599');
   };
@@ -166,15 +137,6 @@ function LoginPage() {
           labelAlign="left"
           onFinish={onFinish}
         >
-          {/* <Form.Item
-                        name="roomId"
-                        label="房间号"
-                        colon={false}
-                        shouldUpdate
-                        rules={[{ required: true, message: '请输入房间号!' }]}
-                    >
-                        <Input placeholder="请输入房间号" allowClear />
-                    </Form.Item> */}
           <Form.Item
             name="mobile"
             // label="手机号 "

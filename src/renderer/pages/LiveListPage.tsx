@@ -73,7 +73,7 @@ function LiveListPage() {
 
   const [teacherLiveList, setTeacherLiveList] = useState([]); // 老师所有直播 列表
   const teacherLiveListRef = useRef([]);
-  const [uploadLogDisable, setUploadLogDisable] = useState(false);
+  // const [uploadLogDisable, setUploadLogDisable] = useState(false);
 
   // 获取老师今日直播
   function getTodayLiveList() {
@@ -246,46 +246,46 @@ function LiveListPage() {
     );
   }
 
-  function uploadLog() {
-    console.log('====uploadLog');
-    window.electron.ipcRenderer.send('uploadLog');
-    setUploadLogDisable(true);
-  }
+  // function uploadLog() {
+  //   console.log('====uploadLog');
+  //   window.electron.ipcRenderer.sendMessage('uploadLog');
+  //   setUploadLogDisable(true);
+  // }
 
-  function onGetLogUrl(result: any) {
-    setTimeout(() => {
-      setUploadLogDisable(false);
-    }, 500);
-    if (result) {
-      // Message.success(`上传成功${result}`)
-      console.log('====onGetLogUrl', result);
-      let param = {
-        file_url: result,
-        user_id: userInfo.userId,
-      };
-      LiveUploadLog(param).then((res) => {
-        if (res?.status?.code == 200) {
-          Message.success(`上传成功`);
-        } else {
-          Message.error(`上传失败，请手动发送`);
-        }
-      });
-    } else {
-      Message.error(`上传失败，请手动发送`);
-    }
-  }
+  // function onGetLogUrl(result: any) {
+  //   setTimeout(() => {
+  //     setUploadLogDisable(false);
+  //   }, 500);
+  //   if (result) {
+  //     // Message.success(`上传成功${result}`)
+  //     console.log('====onGetLogUrl', result);
+  //     let param = {
+  //       file_url: result,
+  //       user_id: userInfo.userId,
+  //     };
+  //     LiveUploadLog(param).then((res) => {
+  //       if (res?.status?.code == 200) {
+  //         Message.success(`上传成功`);
+  //       } else {
+  //         Message.error(`上传失败，请手动发送`);
+  //       }
+  //     });
+  //   } else {
+  //     Message.error(`上传失败，请手动发送`);
+  //   }
+  // }
 
   // 导航到Redux测试页面
   const goToReduxTest = () => {
     navigate('/redux-test');
   };
 
-  useEffect(() => {
-    const removeListener = window.electron.ipcRenderer.on('getLogUrl', onGetLogUrl);
-    return () => {
-      removeListener();
-    };
-  }, []);
+  // useEffect(() => {
+  //   const removeListener = window.electron.ipcRenderer.on('getLogUrl', onGetLogUrl);
+  //   return () => {
+  //     removeListener();
+  //   };
+  // }, []);
 
   // 加载用户信息
   useEffect(() => {
