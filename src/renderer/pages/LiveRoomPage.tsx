@@ -999,11 +999,6 @@ function LiveRoomPage() {
           ></Pendant>
         ) : null}
       </div>
-      <div style={{ position: 'fixed', top: 0, left: 0, zIndex: 1000 }}>
-        <button className="back-btn" onClick={() => navigate('/login')}>
-          back
-        </button>
-      </div>
     </div>
   );
 }

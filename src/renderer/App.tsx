@@ -8,7 +8,6 @@ import { HistoryRouter } from 'redux-first-history/rr6';
 import { LoginPage, LiveListPage, LiveRoomPage } from './pages';
 import './App.scss';
 import configureStore, { history } from './store/configureStore';
-import ReduxTest from './components/common/ReduxTest';
 
 // 创建 Redux store
 const store = configureStore();
@@ -22,7 +21,6 @@ export default function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/live-list" element={<LiveListPage />} />
           <Route path="/live-room/:roomId" element={<LiveRoomPage />} />
-          <Route path="/redux-test" element={<ReduxTest />} />
         </Routes>
       </HistoryRouter>
     </Provider>

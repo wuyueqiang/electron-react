@@ -96,15 +96,6 @@ function LoginPage() {
       });
   }
 
-  // 导航到Redux测试页面
-  const goToReduxTest = () => {
-    navigate('/redux-test');
-  };
-
-  const goToRoom = () => {
-    navigate('/live-room/1755694599');
-  };
-
   useEffect(() => {
     if (!LStorage.getItem('DEVICE_ID')) {
       LStorage.setItem('DEVICE_ID', getUUID());
@@ -157,7 +148,7 @@ function LoginPage() {
         >
           <Form.Item
             name="mobile"
-            // label="手机号 "
+            label="手机号 "
             colon={false}
             shouldUpdate
             rules={[
@@ -186,7 +177,7 @@ function LoginPage() {
           {loginType == 'mobile' ? (
             <Form.Item
               name="password"
-              // label="密码"
+              label="密码"
               colon={false}
               shouldUpdate
               rules={[{ required: true, message: '请输入密码!' }]}
@@ -218,19 +209,6 @@ function LoginPage() {
             </div>
           ) : null}
           <button className="login-btn">登录</button>
-
-          {/* Redux测试按钮 */}
-          <div style={{ marginTop: '20px', textAlign: 'center' }}>
-            <Button type="link" onClick={goToReduxTest}>
-              Redux测试页面
-            </Button>
-          </div>
-
-          <div style={{ marginTop: '20px', textAlign: 'center' }}>
-            <Button type="link" onClick={goToRoom}>
-              测试room
-            </Button>
-          </div>
 
           <Update></Update>
         </Form>
