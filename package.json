@@ -233,8 +233,7 @@
       "target": {
         "target": "default",
         "arch": [
-          "arm64",
-          "x64"
+          "arm64"
         ]
       },
       "type": "distribution",
@@ -248,11 +247,11 @@
           "to": "./Frameworks"
         },
         {
-          "from": "node_modules/trtc-electron-sdk/build/mac-framework/x64/",
+          "from": "node_modules/trtc-electron-sdk/build/mac-framework/arm64/",
           "to": "./Frameworks"
         },
         {
-          "from": "node_modules/trtc-electron-sdk/build/Release/x64/trtc_electron_sdk.node",
+          "from": "node_modules/trtc-electron-sdk/build/Release/arm64/trtc_electron_sdk.node",
           "to": "./Resources"
         }
       ]
