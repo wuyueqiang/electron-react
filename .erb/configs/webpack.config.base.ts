@@ -50,7 +50,7 @@ const configuration: webpack.Configuration = {
         test: /\.node$/,
         loader: 'native-ext-loader',
         options: {
-          emit: false,
+          emit: true,
           rewritePath:
             process.env.NODE_ENV === 'production'
               ? './'

@@ -45,7 +45,7 @@
     "lint:fix": "cross-env NODE_ENV=development eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "package": "cross-env NODE_ENV=production WEB_ENV=prod ts-node ./.erb/scripts/clean.js dist && cross-env NODE_ENV=production WEB_ENV=prod npm run build && electron-builder build --publish never --config.directories.output=release/build && cross-env NODE_ENV=production WEB_ENV=prod npm run build:dll",
     "package-test": "cross-env NODE_ENV=production WEB_ENV=test ts-node ./.erb/scripts/clean.js dist && cross-env NODE_ENV=production WEB_ENV=test npm run build && electron-builder build --publish never --config.directories.output=release/build-test && cross-env NODE_ENV=production WEB_ENV=test npm run build:dll",
-    "package-qa": "cross-env NODE_ENV=production WEB_ENV=qa ts-node ./.erb/scripts/clean.js dist && cross-env NODE_ENV=qa WEB_ENV=qa npm run build && electron-builder build --publish never --config.directories.output=release/build-qa && cross-env NODE_ENV=qa WEB_ENV=qa npm run build:dll",
+    "package-qa": "cross-env NODE_ENV=production WEB_ENV=qa ts-node ./.erb/scripts/clean.js dist && cross-env NODE_ENV=production WEB_ENV=qa npm run build && electron-builder build --publish never --config.directories.output=release/build-qa && cross-env NODE_ENV=production WEB_ENV=qa npm run build:dll",
     "rebuild": "electron-rebuild --parallel --types prod,dev,optional --module-dir release/app",
     "prestart": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true NODE_OPTIONS=\"-r ts-node/register --no-warnings\" webpack --config ./.erb/configs/webpack.config.main.dev.ts",
     "start": "ts-node ./.erb/scripts/check-port-in-use.js && npm run prestart && npm run start:renderer",
@@ -241,7 +241,21 @@
       "hardenedRuntime": true,
       "entitlements": "assets/entitlements.mac.plist",
       "entitlementsInherit": "assets/entitlements.mac.plist",
-      "gatekeeperAssess": false
+      "gatekeeperAssess": false,
+      "extraFiles": [
+        {
+          "from": "node_modules/trtc-electron-sdk/build/Release",
+          "to": "./Frameworks"
+        },
+        {
+          "from": "node_modules/trtc-electron-sdk/build/mac-framework/x64/",
+          "to": "./Frameworks"
+        },
+        {
+          "from": "node_modules/trtc-electron-sdk/build/Release/x64/trtc_electron_sdk.node",
+          "to": "./Resources"
+        }
+      ]
     },
     "dmg": {
       "contents": [
@@ -260,6 +274,12 @@
     "win": {
       "target": [
         "nsis"
+      ],
+      "extraFiles": [
+        {
+          "from": "node_modules/trtc-electron-sdk/build/Release",
+          "to": "."
+        }
       ]
     },
     "linux": {
