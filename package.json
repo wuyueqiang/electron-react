@@ -1,7 +1,8 @@
 {
-  "name": "youshiketang",
+  "name": "youyueketang",
+  "productName": "YOUYUE-LIVE",
   "version": "2.8.9",
-  "description": "A foundation for scalable desktop apps",
+  "description": "",
   "keywords": [
     "electron",
     "boilerplate",
@@ -40,12 +41,12 @@
     "build:dll": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true NODE_OPTIONS=\"-r ts-node/register --no-warnings\" webpack --config ./.erb/configs/webpack.config.renderer.dev.dll.ts",
     "build:main": "cross-env NODE_ENV=production TS_NODE_TRANSPILE_ONLY=true NODE_OPTIONS=\"-r ts-node/register --no-warnings\" webpack --config ./.erb/configs/webpack.config.main.prod.ts",
     "build:renderer": "cross-env NODE_ENV=production TS_NODE_TRANSPILE_ONLY=true NODE_OPTIONS=\"-r ts-node/register --no-warnings\" webpack --config ./.erb/configs/webpack.config.renderer.prod.ts",
-    "postinstall": "ts-node .erb/scripts/check-native-dep.js && electron-builder install-app-deps && npm run build:dll",
+    "postinstall": "ts-node .erb/scripts/check-native-dep.js && electron-builder install-app-deps && ts-node .erb/scripts/sync-version.js && npm run build:dll",
     "lint": "cross-env NODE_ENV=development eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "cross-env NODE_ENV=development eslint . --ext .js,.jsx,.ts,.tsx --fix",
-    "package": "cross-env NODE_ENV=production WEB_ENV=prod ts-node ./.erb/scripts/clean.js dist && cross-env NODE_ENV=production WEB_ENV=prod npm run build && electron-builder build --publish never --config.directories.output=release/build && cross-env NODE_ENV=production WEB_ENV=prod npm run build:dll",
-    "package-test": "cross-env NODE_ENV=production WEB_ENV=test ts-node ./.erb/scripts/clean.js dist && cross-env NODE_ENV=production WEB_ENV=test npm run build && electron-builder build --publish never --config.directories.output=release/build-test && cross-env NODE_ENV=production WEB_ENV=test npm run build:dll",
-    "package-qa": "cross-env NODE_ENV=production WEB_ENV=qa ts-node ./.erb/scripts/clean.js dist && cross-env NODE_ENV=production WEB_ENV=qa npm run build && electron-builder build --publish never --config.directories.output=release/build-qa && cross-env NODE_ENV=production WEB_ENV=qa npm run build:dll",
+    "package": "cross-env NODE_ENV=production WEB_ENV=prod ts-node ./.erb/scripts/clean.js dist && cross-env NODE_ENV=production WEB_ENV=prod npm run build && ts-node .erb/scripts/sync-version.js && electron-builder build --publish never --config.directories.output=release/build && cross-env NODE_ENV=production WEB_ENV=prod npm run build:dll",
+    "package-test": "cross-env NODE_ENV=production WEB_ENV=test ts-node ./.erb/scripts/clean.js dist && cross-env NODE_ENV=production WEB_ENV=test npm run build && ts-node .erb/scripts/sync-version.js && electron-builder build --publish never --config.directories.output=release/build-test && cross-env NODE_ENV=production WEB_ENV=test npm run build:dll",
+    "package-qa": "cross-env NODE_ENV=production WEB_ENV=qa ts-node ./.erb/scripts/clean.js dist && cross-env NODE_ENV=production WEB_ENV=qa npm run build && ts-node .erb/scripts/sync-version.js && electron-builder build --publish never --config.directories.output=release/build-qa && cross-env NODE_ENV=production WEB_ENV=qa npm run build:dll",
     "rebuild": "electron-rebuild --parallel --types prod,dev,optional --module-dir release/app",
     "prestart": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true NODE_OPTIONS=\"-r ts-node/register --no-warnings\" webpack --config ./.erb/configs/webpack.config.main.dev.ts",
     "start": "ts-node ./.erb/scripts/check-port-in-use.js && npm run prestart && npm run start:renderer",
@@ -218,8 +219,8 @@
     "webpack-merge": "^6.0.1"
   },
   "build": {
-    "productName": "ElectronReact",
-    "appId": "org.erb.ElectronReact",
+    "productName": "优悦直播",
+    "appId": "cc.youyue.youyueketang",
     "asar": true,
     "afterSign": ".erb/scripts/notarize.js",
     "asarUnpack": "**\\*.{node,dll}",
@@ -229,6 +230,7 @@
       "package.json"
     ],
     "mac": {
+      "artifactName": "youyue-live-${version}-mac.${ext}",
       "notarize": false,
       "target": {
         "target": "default",
@@ -271,6 +273,7 @@
       ]
     },
     "win": {
+      "artifactName": "youyue-live-${version}-win.${ext}",
       "target": [
         "nsis"
       ],
